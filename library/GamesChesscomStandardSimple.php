@@ -698,11 +698,14 @@ class GamesChesscomStandardSimple {
     {
         $ret = array();
         $king_loc = $this->_pieces[$color . 'K'];
+        $opposite_color = $color == 'W' ? 'B' : 'W';
 
-        $enemy_locs = $this->_getAllPieceLocations($color == 'W' ? 'B' : 'W');
-        foreach($enemy_locs as $loc) {
-            if ($this->_isThreat($loc, $king_loc)) {
-                $ret[] = $loc;
+        foreach ($this->_pieces as $name => $loc) {
+            if ($name{0} == $opposite_color) {
+                $enemy_loc = (is_array($loc) ? $loc[0] : $loc);
+                if ($enemy_loc && $this->_isThreat($enemy_loc, $king_loc)) {
+                    $ret[] = $enemy_loc;
+                }
             }
         }
 
@@ -715,15 +718,6 @@ class GamesChesscomStandardSimple {
         return $ret;
     }
 
-    static function _squareToXYCoord($square)
-    {
-        return array(ord($square{0}) - ord('a'), ord($square{1}) - ord('1'));
-    }
-    static function _xyCoordToSquare($coord)
-    {
-        return chr($coord[0] + ord('a')) . chr($coord[1] + ord('1'));
-    }
-    
     function _isEmptySquare($square)
     {
         return $this->_board[$square] == $square;
@@ -731,11 +725,12 @@ class GamesChesscomStandardSimple {
     
     function _isThreat($from, $to)
     {
-        list($x1, $y1) = GamesChesscomStandardSimple::_squareToXYCoord($from);
-        list($x2, $y2) = GamesChesscomStandardSimple::_squareToXYCoord($to);
+        $x1 = ord($from{0}) - ord('a');
+        $y1 = ord($from{1}) - ord('1');
+        $x2 = ord($to{0}) - ord('a');
+        $y2 = ord($to{1}) - ord('1');
         
         $piece = $this->_squareToPiece($from);
-        // isset($piece['piece']) or die($from);
         switch ($piece['piece']) {
         case 'P':
             if ($piece['color'] == 'W') {
@@ -746,25 +741,22 @@ class GamesChesscomStandardSimple {
             }
             return false;
         case 'R':
-            return $this->_isRookThreat($from, $to);
+            return $this->_isRookThreat($x1, $y1, $x2, $y2);
         case 'N':
             return abs($x1 - $x2) == 1 && abs($y1 - $y2) == 2 || abs($x1 - $x2) == 2 && abs($y1 - $y2) == 1;
         case 'B':
-            return $this->_isBishopThreat($from, $to);
+            return $this->_isBishopThreat($x1, $y1, $x2, $y2);
         case 'Q':
-            return $this->_isBishopThreat($from, $to) || $this->_isRookThreat($from, $to);
+            return $this->_isBishopThreat($x1, $y1, $x2, $y2) || $this->_isRookThreat($x1, $y1, $x2, $y2);
         case 'K':
             return abs($x1 - $x2) <= 1 && abs($y1 - $y2) <= 1;
         }
     }
-    function _isRookThreat($from, $to)
+    function _isRookThreat($x1, $y1, $x2, $y2)
     {
-        list($x1, $y1) = GamesChesscomStandardSimple::_squareToXYCoord($from);
-        list($x2, $y2) = GamesChesscomStandardSimple::_squareToXYCoord($to);
-
         if ($y1 == $y2) {
             for ($x = min($x1, $x2) + 1; $x < max($x1, $x2); $x++) {
-                if (!$this->_isEmptySquare(GamesChesscomStandardSimple::_xyCoordToSquare(array($x, $y1)))) {
+                if (!$this->_isEmptySquare(chr($x + ord('a')) . chr($y1 + ord('1')))) {
                     return false;
                 }
             }
@@ -772,7 +764,7 @@ class GamesChesscomStandardSimple {
         }
         if ($x1 == $x2) {
             for ($y = min($y1, $y2) + 1; $y < max($y1, $y2); $y++) {
-                if (!$this->_isEmptySquare(GamesChesscomStandardSimple::_xyCoordToSquare(array($x1, $y)))) {
+                if (!$this->_isEmptySquare(chr($x1 + ord('a')) . chr($y + ord('1')))) {
                     return false;
                 }
             }
@@ -780,18 +772,15 @@ class GamesChesscomStandardSimple {
         }
         return false;
     }
-    function _isBishopThreat($from, $to)
+    function _isBishopThreat($x1, $y1, $x2, $y2)
     {
-        list($x1, $y1) = GamesChesscomStandardSimple::_squareToXYCoord($from);
-        list($x2, $y2) = GamesChesscomStandardSimple::_squareToXYCoord($to);
-
         if (abs($x1 - $x2) == abs($y1 - $y2)) {
             $dx = $x1 < $x2? 1: -1;
             $dy = $y1 < $y2? 1: -1;
             $x = $x1 + $dx;
             $y = $y1 + $dy;
             while ($x != $x2) {
-                if (!$this->_isEmptySquare(GamesChesscomStandardSimple::_xyCoordToSquare(array($x, $y)))) {
+                if (!$this->_isEmptySquare(chr($x + ord('a')) . chr($y + ord('1')))) {
                     return false;
                 }
                 $x += $dx;
