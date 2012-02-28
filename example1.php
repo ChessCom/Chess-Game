@@ -1,8 +1,10 @@
 <?php
 
-    require('library/GamesChesscomStandard.php');
+require('library/GamesChesscomStandard.php');
 
-    $startTime = microtime(true);
+$startTime = microtime(true);
+
+for ($i=0; $i<10; $i++) {
 
     $moveList = 'mCYIgvZRfH5ZegWOHZ6ZlBIBdB!TcM3VMT2Tbs0Sad?!sm46kA90jr7GBlGldlZQmw!EpxE!vB89BQ6Qfd92gp!6wmXHAHOHmBQcdc6cBHcQiy29pw98wE8ZnDQIHBVNEFTLFNLCNE1LENIJNUCultJBtuBDowDCuvRJxFJBFNCuvDuwU1BtNVwxDB0RyGSKGOxVBtKCOWV?tx?41ULDULCu';
 
@@ -21,15 +23,34 @@
       $moveList = substr($moveList,2);
         // nice_print($chessGame->toArray());
     }
+    
+}
 
-    $endTime = microtime(true);
+$endTime = microtime(true);
 
-    echo "Processing Time: " . ($endTime - $startTime) . " seconds\n";
+echo "Processing Time: " . ($endTime - $startTime) . " seconds\n";
 
-    // print_r($chessGame->toArray());
+/*
+// print_r($chessGame->toArray());
+$moves = $chessGame->getMoveList();
+$startTime = microtime(true);
+for ($i=0; $i<10; $i++) {
+    $chessGame = new GamesChesscomStandard();
+    $chessGame->resetGame();
+    // nice_print($chessGame->toArray());
+    foreach ($moves as $move) {
+        // var_dump($move);
+        $chessGame->moveSAN($move[0]);
+        // nice_print($chessGame->toArray());
+        $chessGame->moveSAN($move[1]);
+        // nice_print($chessGame->toArray());
+    }
+}
+$endTime = microtime(true);
 
-  
-  
+echo "Processing Time: " . ($endTime - $startTime) . " seconds\n";
+
+  */
 function nice_print($board)
 {
     $i = 0;

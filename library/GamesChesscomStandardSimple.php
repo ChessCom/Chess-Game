@@ -925,13 +925,13 @@ class GamesChesscomStandardSimple {
      * @param string
      * @return true|PEAR_Error
      */
-    function moveSAN($move)
+    function moveSAN($move, $from = null)
     {
         if (!is_array($this->_board)) {
             $this->resetGame();
         }
         if (!$this->isError($parsedMove = $this->_parseMove($move))) {
-            if (!$this->isError($err = $this->_validMove($parsedMove))) {
+            if (!$this->isError($err = $this->_validMove($parsedMove, $from))) {
                 list($key, $parsedMove) = each($parsedMove);
                 $this->_moves[$this->_moveNumber][($this->_move == 'W') ? 0 : 1] = $move;
                 $oldMoveNumber = $this->_moveNumber;
@@ -977,7 +977,7 @@ class GamesChesscomStandardSimple {
                     }
                     $this->_enPassantSquare = '-';
                 } else {
-                    $movedfrom = $this->_getSquareFromParsedMove($parsedMove);
+                    $movedfrom = $from? $from: $this->_getSquareFromParsedMove($parsedMove);
                     $this->_moveFromSquare = $movedfrom;
                     $this->_lastMove = $parsedMove;
                     $promote = isset($parsedMove['promote']) ?
@@ -1021,10 +1021,12 @@ class GamesChesscomStandardSimple {
                     }
                 }
                 $moveWithCheck = $move;
-                if ($this->inCheckMate(($this->_move == 'W') ? 'B' : 'W')) {
-                    $moveWithCheck .= '#';
-                } elseif ($this->inCheck(($this->_move == 'W') ? 'B' : 'W')) {
-                    $moveWithCheck .= '+';
+                if ($checkingSquares = $this->inCheck(($this->_move == 'W') ? 'B' : 'W')) {
+                    if ($this->inCheckMate(($this->_move == 'W') ? 'B' : 'W', $checkingSquares)) {
+                        $moveWithCheck .= '#';
+                    } else {
+                        $moveWithCheck .= '+';
+                    }
                 }
                 $this->_movesWithCheck[$oldMoveNumber][($this->_move == 'W') ? 0 : 1] = $moveWithCheck;
                 $this->_move = ($this->_move == 'W' ? 'B' : 'W');
@@ -1060,7 +1062,7 @@ class GamesChesscomStandardSimple {
         if ($this->isError($move)) {
             return $move;
         } else {
-            return $this->moveSAN($move);
+            return $this->moveSAN($move, $from);
         }
     }
 
@@ -1134,7 +1136,7 @@ class GamesChesscomStandardSimple {
      * @return boolean
      * @throws GAMES_CHESS_ERROR_INVALID_COLOR
      */
-    function inCheckMate($color = null)
+    function inCheckMate($color = null, $checkingSquares = null)
     {
         if (is_null($color)) {
             $color = $this->_move;
@@ -1144,8 +1146,10 @@ class GamesChesscomStandardSimple {
             return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
-        if (!($checking = $this->inCheck($color))) {
-            return false;
+        if (!($checking = $checkingSquares)) {
+            if (!($checking = $this->inCheck($color))) {
+                return false;
+            }
         }
         $moves = $this->getPossibleKingMoves($king = $this->_getKing($color), $color);
         foreach ($moves as $escape) {
@@ -2109,7 +2113,7 @@ class GamesChesscomStandardSimple {
      * @throws GAMES_CHESS_ERROR_MOVE_WOULD_CHECK
      * @access protected
      */
-    function _validMove($move)
+    function _validMove($move, $from = null)
     {
         list($type, $info) = each($move);
 
@@ -2230,9 +2234,9 @@ class GamesChesscomStandardSimple {
             break;
             case GAMES_CHESS_PIECEMOVE :
             case GAMES_CHESS_PAWNMOVE :
-                if (!$this->isError($piecesq = $this->_getSquareFromParsedMove($info))) {
+                if (!$this->isError($piecesq = $from? $from: $this->_getSquareFromParsedMove($info))) {
                     $colorMoving = $this->_move;
-                    $wasinCheck = $this->inCheck($colorMoving);
+                    // $wasinCheck = $this->inCheck($colorMoving);  //KK
                     $piece = $this->_board[$info['square']];
                     if ($info['takes'] && $this->_board[$info['square']] ==
                           $info['square']) {
@@ -2244,10 +2248,11 @@ class GamesChesscomStandardSimple {
                     }
                     $this->_moveAlgebraic($piecesq, $info['square']);
                     $valid = !$this->inCheck($colorMoving);
-                    if ($wasinCheck && !$valid) {
-                        $this->rollbackTransaction();
-                        return $this->raiseError(GAMES_CHESS_ERROR_STILL_IN_CHECK);
-                    } elseif (!$valid) {
+                    // if ($wasinCheck && !$valid) {
+                        // $this->rollbackTransaction();
+                        // return $this->raiseError(GAMES_CHESS_ERROR_STILL_IN_CHECK);
+                    // } elseif (!$valid) {
+                    if (!$valid) {
                         $this->rollbackTransaction();
                         return $this->raiseError(GAMES_CHESS_ERROR_MOVE_WOULD_CHECK);
                     }
@@ -2313,11 +2318,11 @@ class GamesChesscomStandardSimple {
             }
           }
         } else {
-          $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);
+          $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
           if (!in_array($to, $moves)) {
               return $this->raiseError(GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
                   array('from' => $from, 'to' => $to));
-          }
+          }  //KK end
         }
         $others = array();
         if ($piece['piece'] != 'K' && $piece['piece'] != 'P') {
@@ -2328,7 +2333,7 @@ class GamesChesscomStandardSimple {
         $ambiguous = array();
         if (count($others)) {
             foreach ($others as $square) {
-                if (in_array($to, $this->getPossibleMoves($piece['piece'], $square,
+                if (in_array($to, $this->getPossibleMoves($piece['piece'], $square,     //KK again: no need to get all possible moves
                                                           $piece['color']))) {
                     // other pieces can move to this square - need to disambiguate
                     $ambiguous[] = $square;
