@@ -1,13 +1,4 @@
 <?php
-/*
-This is a merge between GamesChessStandard.inc and Games_Chess.inc
-
-Needed to modify the MoveSan() routing to leave out some of the functions
-we don't need for importing the games, but for some reason for some games
-it was not working properly when I was using a extention of the base class.
-Now that everything is in one file, problem seems to be solved.
-
-*/
 
 /**#@+
  * Move constants
@@ -235,8 +226,11 @@ define('GAMES_CHESS_ERROR_CANT_PLACE_18', 37);
  * - {@link getMoveList()}: Use to retrieve the list of SAN moves for this game
  * @package Games_Chess
  */
-class GamesChesscomStandardSimple {
+class ChessGame {
 
+    /**
+     * For representing a game with fewer chars, we can use 2 chars for every possible chess move. we call this "piot move notation"
+     */
   public static $objTranslateSquare = array(
     'a' => 'a1',
     'b' => 'b1',
@@ -722,14 +716,14 @@ class GamesChesscomStandardSimple {
     {
         return $this->_board[$square] == $square;
     }
-    
+
     function _isThreat($from, $to)
     {
         $x1 = ord($from{0}) - ord('a');
         $y1 = ord($from{1}) - ord('1');
         $x2 = ord($to{0}) - ord('a');
         $y2 = ord($to{1}) - ord('1');
-        
+
         $piece = $this->_squareToPiece($from);
         switch ($piece['piece']) {
         case 'P':
@@ -790,7 +784,7 @@ class GamesChesscomStandardSimple {
         }
         return false;
     }
-        
+
     function _getPossibleChecks($color)
     {
         $ret = array();
