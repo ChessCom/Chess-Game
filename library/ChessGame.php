@@ -3135,9 +3135,7 @@ class ChessGame {
      */
     function raiseError($code, $extra = array())
     {
-        require_once 'PEAR.php';
-        return PEAR::raiseError($this->getMessage($code, $extra), $code,
-            null, null, $extra);
+        throw \Exception($this->getMessage($code, $extra));
     }
 
     /**
