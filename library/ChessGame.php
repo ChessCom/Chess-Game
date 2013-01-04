@@ -3135,7 +3135,7 @@ class ChessGame {
      */
     function raiseError($code, $extra = array())
     {
-        throw \Exception($this->getMessage($code, $extra));
+        throw new \Exception($this->getMessage($code, $extra));
     }
 
     /**
