@@ -1152,9 +1152,13 @@ class ChessGame {
             if (!class_exists('PEAR')) {
                 require_once 'PEAR.php';
             }
-            PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
-            $this->moveSquare($king, $escape);
-            PEAR::popErrorHandling();
+
+            try {
+                $this->moveSquare($king, $escape);
+            } catch (\Exception $e) {
+                //do nothing
+            }
+
             $this->_move = $color;
             $stillchecked = $this->inCheck($color);
             $this->rollbackTransaction();
@@ -1202,9 +1206,13 @@ class ChessGame {
                     if (!class_exists('PEAR')) {
                         require_once 'PEAR.php';
                     }
-                    PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
-                    $err = $this->moveSquare($a, $move);
-                    PEAR::popErrorHandling();
+
+                    try {
+                        $err = $this->moveSquare($a, $move);
+                    } catch (\Exception $e) {
+                        //do nothing
+                    }
+
                     $this->rollbackTransaction();
                     if (!is_object($err)) {
                         return false;
@@ -1947,9 +1955,13 @@ class ChessGame {
                     if (!class_exists('PEAR')) {
                         require_once 'PEAR.php';
                     }
-                    PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
-                    $err = $this->addPiece('W', $c, $loc);
-                    PEAR::popErrorHandling();
+
+                    try {
+                        $err = $this->addPiece('W', $c, $loc);
+                    } catch (\Exception $e) {
+                        //do nothing
+                    }
+
                     if ($this->isError($err)) {
                         if ($err->getCode() == GAMES_CHESS_ERROR_MULTIPIECE) {
                             return $this->raiseError(GAMES_CHESS_ERROR_FEN_MULTIPIECE,
@@ -1976,9 +1988,13 @@ class ChessGame {
                     if (!class_exists('PEAR')) {
                         require_once 'PEAR.php';
                     }
-                    PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
-                    $err = $this->addPiece('B', strtoupper($c), $loc);
-                    PEAR::popErrorHandling();
+
+                    try {
+                        $err = $this->addPiece('B', strtoupper($c), $loc);
+                    } catch (\Exception $e) {
+                        //do nothing
+                    }
+
                     if ($this->isError($err)) {
                         if ($err->getCode() == GAMES_CHESS_ERROR_MULTIPIECE) {
                             return $this->raiseError(GAMES_CHESS_ERROR_FEN_MULTIPIECE,
@@ -3441,9 +3457,13 @@ class ChessGame {
                     if (!class_exists('PEAR')) {
                         require_once 'PEAR.php';
                     }
-                    PEAR::pushErrorHandling(PEAR_ERROR_RETURN);
-                    $ret = $this->moveSquare($value, $square);
-                    PEAR::popErrorHandling(PEAR_ERROR_RETURN);
+
+                    try {
+                        $ret = $this->moveSquare($value, $square);
+                    } catch (\Exception $e) {
+                        //do nothing
+                    }
+
                     $this->_move = $color;
                     $stillchecked = $this->inCheck($color);
                     $this->rollbackTransaction();
@@ -3504,4 +3524,3 @@ class ChessGame {
     }
 
 }
-?>
