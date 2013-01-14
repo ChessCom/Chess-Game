@@ -1927,6 +1927,7 @@ class ChessGame {
                 array('fen' => $fen, 'sections' => count($splitfen)));
         }
 
+        $splitfen = explode(' ', $fen);
         foreach($splitfen as $index => $test) {
             if ($test == '') {
                 return $this->raiseError(GAMES_CHESS_ERROR_EMPTY_FEN,
