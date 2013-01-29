@@ -1833,8 +1833,10 @@ class ChessGame {
             return $this->raiseError(GAMES_CHESS_ERROR_CANT_PLACE_18, array('san' => $move));
         // error
         } else {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SAN,
-                array('pgn' => $move));
+            return array();
+            //code below causes breaks when there are comments/analysis in the pgn string. just return array here works fine
+            //return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SAN,
+            //   array('pgn' => $move));
         }
     }
 
