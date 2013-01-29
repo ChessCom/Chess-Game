@@ -1833,10 +1833,8 @@ class ChessGame {
             return $this->raiseError(GAMES_CHESS_ERROR_CANT_PLACE_18, array('san' => $move));
         // error
         } else {
-            return array();
-            //code below causes breaks when there are comments/analysis in the pgn string. just return array here works fine
-            //return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SAN,
-            //   array('pgn' => $move));
+            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SAN,
+                array('pgn' => $move));
         }
     }
 
@@ -3154,7 +3152,10 @@ class ChessGame {
      */
     function raiseError($code, $extra = array())
     {
-        throw new \Exception($this->getMessage($code, $extra));
+        //Do NOT F with this please. throwing exception here will break this whole library
+        require_once 'PEAR.php';
+        return PEAR::raiseError($this->getMessage($code, $extra), $code,
+            null, null, $extra);
     }
 
     /**
