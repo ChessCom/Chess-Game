@@ -1,189 +1,5 @@
 <?php
 
-/**#@+
- * Move constants
- */
-/**
- * Castling move (O-O or O-O-O)
- */
-define('GAMES_CHESS_CASTLE', 1);
-/**
- * Pawn move (e4, e8=Q, exd5)
- */
-define('GAMES_CHESS_PAWNMOVE', 2);
-/**
- * Piece move (Qa4, Nfe6, Bxe5, Re2xe6)
- */
-define('GAMES_CHESS_PIECEMOVE', 3);
-/**
- * Special move type used in Wild23 like P@a4 (place a pawn at a4)
- */
-define('GAMES_CHESS_PIECEPLACEMENT', 4);
-/**#@-*/
-
-/**#@+
- * Error Constants
- */
-/**
- * Invalid Standard Algebraic Notation was used
- */
-define('GAMES_CHESS_ERROR_INVALID_SAN', 1);
-/**
- * The number of space-separated fields in a FEN passed to {@internal
- * {@link _parseFen()} through }} {@link resetGame()} was incorrect, should be 6
- */
-define('GAMES_CHESS_ERROR_FEN_COUNT', 2);
-/**
- * A FEN containing multiple spaces in a row was parsed {@internal by
- * {@link _parseFen()}}}
- */
-define('GAMES_CHESS_ERROR_EMPTY_FEN', 3);
-/**
- * Too many pieces were passed in for the chessboard to fit them in a FEN
- * {@internal passed to {@link _parseFen()}}}
- */
-define('GAMES_CHESS_ERROR_FEN_TOOMUCH', 4);
-/**
- * The indicator of which side to move in a FEN was neither "w" nor "b"
- */
-define('GAMES_CHESS_ERROR_FEN_TOMOVEWRONG', 5);
-/**
- * The list of castling indicators was too long (longest is KQkq) of a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_CASTLETOOLONG', 6);
-/**
- * Something other than K, Q, k or q was in the castling indicators of a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_CASTLEWRONG', 7);
-/**
- * The en passant square was neither "-" nor an algebraic square in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALID_EP', 8);
-/**
- * The ply count (number of half-moves) was not a number in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALID_PLY', 9);
-/**
- * The move count (pairs of white/black moves) was not a number in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER', 10);
-/**
- * An illegal move was attempted, the king is in check
- */
-define('GAMES_CHESS_ERROR_IN_CHECK', 11);
-/**
- * Can't castle kingside, either king or rook has moved
- */
-define('GAMES_CHESS_ERROR_CANT_CK', 12);
-/**
- * Can't castle kingside, pieces are in the way on the f and/or g files
- */
-define('GAMES_CHESS_ERROR_CK_PIECES_IN_WAY', 13);
-/**
- * Can't castle kingside, either king or rook has moved
- */
-define('GAMES_CHESS_ERROR_CANT_CQ', 14);
-/**
- * Can't castle queenside, pieces are in the way on the d, c and/or b files
- */
-define('GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY', 15);
-/**
- * Castling would place the king in check, which is illegal
- */
-define('GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK', 16);
-/**
- * Performing a requested move would place the king in check
- */
-define('GAMES_CHESS_ERROR_MOVE_WOULD_CHECK', 17);
-/**
- * The requested move does not remove a check on the king
- */
-define('GAMES_CHESS_ERROR_STILL_IN_CHECK', 18);
-/**
- * An attempt (however misguided) was made to capture one's own piece, illegal
- */
-define('GAMES_CHESS_ERROR_CANT_CAPTURE_OWN', 19);
-/**
- * An attempt was made to capture a piece on a square that does not contain a piece
- */
-define('GAMES_CHESS_ERROR_NO_PIECE', 20);
-/**
- * A attempt to move an opponent's piece was made, illegal
- */
-define('GAMES_CHESS_ERROR_WRONG_COLOR', 21);
-/**
- * A request was made to move a piece from one square to another, but it can't
- * move to that square legally
- */
-define('GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY', 22);
-/**
- * An attempt was made to add a piece to the chessboard, but there are too many
- * pieces of that type already on the chessboard
- */
-define('GAMES_CHESS_ERROR_MULTIPIECE', 23);
-/**
- * An attempt was made to add a piece to the chessboard through the parsing of
- * a FEN, but there are too many pieces of that type already on the chessboard
- */
-define('GAMES_CHESS_ERROR_FEN_MULTIPIECE', 24);
-/**
- * An attempt was made to add a piece to the chessboard on top of an existing piece
- */
-define('GAMES_CHESS_ERROR_DUPESQUARE', 25);
-/**
- * An invalid piece indicator was used in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALIDPIECE', 26);
-/**
- * Not enough piece data was passed into the FEN to explain every square on the board
- */
-define('GAMES_CHESS_ERROR_FEN_TOOLITTLE', 27);
-/**
- * Something other than "W" or "B" was passed to a method needing a color
- */
-define('GAMES_CHESS_ERROR_INVALID_COLOR', 28);
-/**
- * Something that isn't SAN ([a-h][1-8]) was passed to a function requiring a
- * square location
- */
-define('GAMES_CHESS_ERROR_INVALID_SQUARE', 29);
-/**
- * Something other than "P", "Q", "R", "B", "N" or "K" was passed to a method
- * needing a piece type
- */
-define('GAMES_CHESS_ERROR_INVALID_PIECE', 30);
-/**
- * Something other than "Q", "R", "B", or "N" was passed to a method
- * needing a piece type for pawn promotion
- */
-define('GAMES_CHESS_ERROR_INVALID_PROMOTE', 31);
-/**
- * SAN was passed in that is too ambiguous - multiple pieces could execute
- * the move, and no disambiguation (like Naf3 or Bf3xe4) was used
- */
-define('GAMES_CHESS_ERROR_TOO_AMBIGUOUS', 32);
-/**
- * No piece of the current color can execute the SAN (as in, if Na3 is passed
- * in, but there are no knights that can reach a3
- */
-define('GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT', 33);
-/**
- * In loser's chess, and the current move does not capture a piece although
- * capture is possible.
- */
-define('GAMES_CHESS_ERROR_MOVE_MUST_CAPTURE', 34);
-/**
- * When piece placement is attempted, but no pieces exist to be placed
- */
-define('GAMES_CHESS_ERROR_NOPIECES_TOPLACE', 35);
-/**
- * When piece placement is attempted, but there is a piece on the desired square already
- */
-define('GAMES_CHESS_ERROR_PIECEINTHEWAY', 36);
-/**
- * When a pawn placement on the first or back rank is attempted
- */
-define('GAMES_CHESS_ERROR_CANT_PLACE_18', 37);
 /**
  * ABSTRACT parent class - use {@link Games_Chess_Standard} for a typical
  * chess game
@@ -227,6 +43,231 @@ define('GAMES_CHESS_ERROR_CANT_PLACE_18', 37);
  * @package Games_Chess
  */
 class ChessGame {
+
+    /**#@+
+     * Move constants
+     */
+    /**
+     * Castling move (O-O or O-O-O)
+     */
+    const GAMES_CHESS_CASTLE = 1;
+
+    /**
+     * Pawn move (e4, e8=Q, exd5)
+     */
+    const GAMES_CHESS_PAWNMOVE = 2;
+
+    /**
+     * Piece move (Qa4, Nfe6, Bxe5, Re2xe6)
+     */
+    const GAMES_CHESS_PIECEMOVE = 3;
+
+    /**
+     * Special move type used in Wild23 like P@a4 (place a pawn at a4)
+     */
+    const GAMES_CHESS_PIECEPLACEMENT = 4;
+
+    /**#@-*/
+
+    /**#@+
+     * Error Constants
+     */
+    /**
+     * Invalid Standard Algebraic Notation was used
+     */
+    const GAMES_CHESS_ERROR_INVALID_SAN = 1;
+
+    /**
+     * The number of space-separated fields in a FEN passed to {@internal
+     * {@link _parseFen()} through }} {@link resetGame()} was incorrect, should be 6
+     */
+     const GAMES_CHESS_ERROR_FEN_COUNT = 2;
+
+    /**
+     * A FEN containing multiple spaces in a row was parsed {@internal by
+     * {@link _parseFen()}}}
+     */
+    const GAMES_CHESS_ERROR_EMPTY_FEN = 3;
+
+    /**
+     * Too many pieces were passed in for the chessboard to fit them in a FEN
+     * {@internal passed to {@link _parseFen()}}}
+     */
+    const GAMES_CHESS_ERROR_FEN_TOOMUCH = 4;
+
+    /**
+     * The indicator of which side to move in a FEN was neither "w" nor "b"
+     */
+    const GAMES_CHESS_ERROR_FEN_TOMOVEWRONG = 5;
+
+    /**
+     * The list of castling indicators was too long (longest is KQkq) of a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_CASTLETOOLONG = 6;
+
+    /**
+     * Something other than K, Q, k or q was in the castling indicators of a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_CASTLEWRONG = 7;
+
+    /**
+     * The en passant square was neither "-" nor an algebraic square in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALID_EP = 8;
+
+    /**
+     * The ply count (number of half-moves) was not a number in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALID_PLY = 9;
+
+    /**
+     * The move count (pairs of white/black moves) was not a number in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER = 10;
+
+    /**
+     * An illegal move was attempted, the king is in check
+     */
+    const GAMES_CHESS_ERROR_IN_CHECK = 11;
+
+    /**
+     * Can't castle kingside, either king or rook has moved
+     */
+    const GAMES_CHESS_ERROR_CANT_CK = 12;
+
+    /**
+     * Can't castle kingside, pieces are in the way on the f and/or g files
+     */
+    const GAMES_CHESS_ERROR_CK_PIECES_IN_WAY = 13;
+
+    /**
+     * Can't castle kingside, either king or rook has moved
+     */
+    const GAMES_CHESS_ERROR_CANT_CQ = 14;
+
+    /**
+     * Can't castle queenside, pieces are in the way on the d, c and/or b files
+     */
+    const GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY = 15;
+
+    /**
+     * Castling would place the king in check, which is illegal
+     */
+    const GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK = 16;
+
+    /**
+     * Performing a requested move would place the king in check
+     */
+    const GAMES_CHESS_ERROR_MOVE_WOULD_CHECK = 17;
+
+    /**
+     * The requested move does not remove a check on the king
+     */
+    const GAMES_CHESS_ERROR_STILL_IN_CHECK = 18;
+
+    /**
+     * An attempt (however misguided) was made to capture one's own piece, illegal
+     */
+    const GAMES_CHESS_ERROR_CANT_CAPTURE_OWN = 19;
+
+    /**
+     * An attempt was made to capture a piece on a square that does not contain a piece
+     */
+    const GAMES_CHESS_ERROR_NO_PIECE = 20;
+
+    /**
+     * A attempt to move an opponent's piece was made, illegal
+     */
+    const GAMES_CHESS_ERROR_WRONG_COLOR = 21;
+
+    /**
+     * A request was made to move a piece from one square to another, but it can't
+     * move to that square legally
+     */
+    const GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY = 22;
+
+    /**
+     * An attempt was made to add a piece to the chessboard, but there are too many
+     * pieces of that type already on the chessboard
+     */
+    const GAMES_CHESS_ERROR_MULTIPIECE = 23;
+
+    /**
+     * An attempt was made to add a piece to the chessboard through the parsing of
+     * a FEN, but there are too many pieces of that type already on the chessboard
+     */
+    const GAMES_CHESS_ERROR_FEN_MULTIPIECE = 24;
+
+    /**
+     * An attempt was made to add a piece to the chessboard on top of an existing piece
+     */
+    const GAMES_CHESS_ERROR_DUPESQUARE = 25;
+
+    /**
+     * An invalid piece indicator was used in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALIDPIECE = 26;
+
+    /**
+     * Not enough piece data was passed into the FEN to explain every square on the board
+     */
+    const GAMES_CHESS_ERROR_FEN_TOOLITTLE = 27;
+
+    /**
+     * Something other than "W" or "B" was passed to a method needing a color
+     */
+    const GAMES_CHESS_ERROR_INVALID_COLOR = 28;
+
+    /**
+     * Something that isn't SAN ([a-h][1-8]) was passed to a function requiring a
+     * square location
+     */
+    const GAMES_CHESS_ERROR_INVALID_SQUARE = 29;
+
+    /**
+     * Something other than "P", "Q", "R", "B", "N" or "K" was passed to a method
+     * needing a piece type
+     */
+    const GAMES_CHESS_ERROR_INVALID_PIECE = 30;
+
+    /**
+     * Something other than "Q", "R", "B", or "N" was passed to a method
+     * needing a piece type for pawn promotion
+     */
+    const GAMES_CHESS_ERROR_INVALID_PROMOTE = 31;
+
+    /**
+     * SAN was passed in that is too ambiguous - multiple pieces could execute
+     * the move, and no disambiguation (like Naf3 or Bf3xe4) was used
+     */
+    const GAMES_CHESS_ERROR_TOO_AMBIGUOUS = 32;
+
+    /**
+     * No piece of the current color can execute the SAN (as in, if Na3 is passed
+     * in, but there are no knights that can reach a3
+     */
+    const GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT = 33;
+
+    /**
+     * In loser's chess, and the current move does not capture a piece although
+     * capture is possible.
+     */
+    const GAMES_CHESS_ERROR_MOVE_MUST_CAPTURE = 34;
+
+    /**
+     * When piece placement is attempted, but no pieces exist to be placed
+     */
+    const GAMES_CHESS_ERROR_NOPIECES_TOPLACE = 35;
+
+    /**
+     * When piece placement is attempted, but there is a piece on the desired square already
+     */
+    const GAMES_CHESS_ERROR_PIECEINTHEWAY = 36;
+
+    /**
+     * When a pawn placement on the first or back rank is attempted
+     */
+    const GAMES_CHESS_ERROR_CANT_PLACE_18 = 37;
 
     /**
      * For representing a game with fewer chars, we can use 2 chars for every possible chess move. we call this "piot move notation"
