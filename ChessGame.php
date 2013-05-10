@@ -1,189 +1,7 @@
 <?php
 
-/**#@+
- * Move constants
- */
-/**
- * Castling move (O-O or O-O-O)
- */
-define('GAMES_CHESS_CASTLE', 1);
-/**
- * Pawn move (e4, e8=Q, exd5)
- */
-define('GAMES_CHESS_PAWNMOVE', 2);
-/**
- * Piece move (Qa4, Nfe6, Bxe5, Re2xe6)
- */
-define('GAMES_CHESS_PIECEMOVE', 3);
-/**
- * Special move type used in Wild23 like P@a4 (place a pawn at a4)
- */
-define('GAMES_CHESS_PIECEPLACEMENT', 4);
-/**#@-*/
+namespace Chess\Game;
 
-/**#@+
- * Error Constants
- */
-/**
- * Invalid Standard Algebraic Notation was used
- */
-define('GAMES_CHESS_ERROR_INVALID_SAN', 1);
-/**
- * The number of space-separated fields in a FEN passed to {@internal
- * {@link _parseFen()} through }} {@link resetGame()} was incorrect, should be 6
- */
-define('GAMES_CHESS_ERROR_FEN_COUNT', 2);
-/**
- * A FEN containing multiple spaces in a row was parsed {@internal by
- * {@link _parseFen()}}}
- */
-define('GAMES_CHESS_ERROR_EMPTY_FEN', 3);
-/**
- * Too many pieces were passed in for the chessboard to fit them in a FEN
- * {@internal passed to {@link _parseFen()}}}
- */
-define('GAMES_CHESS_ERROR_FEN_TOOMUCH', 4);
-/**
- * The indicator of which side to move in a FEN was neither "w" nor "b"
- */
-define('GAMES_CHESS_ERROR_FEN_TOMOVEWRONG', 5);
-/**
- * The list of castling indicators was too long (longest is KQkq) of a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_CASTLETOOLONG', 6);
-/**
- * Something other than K, Q, k or q was in the castling indicators of a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_CASTLEWRONG', 7);
-/**
- * The en passant square was neither "-" nor an algebraic square in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALID_EP', 8);
-/**
- * The ply count (number of half-moves) was not a number in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALID_PLY', 9);
-/**
- * The move count (pairs of white/black moves) was not a number in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER', 10);
-/**
- * An illegal move was attempted, the king is in check
- */
-define('GAMES_CHESS_ERROR_IN_CHECK', 11);
-/**
- * Can't castle kingside, either king or rook has moved
- */
-define('GAMES_CHESS_ERROR_CANT_CK', 12);
-/**
- * Can't castle kingside, pieces are in the way on the f and/or g files
- */
-define('GAMES_CHESS_ERROR_CK_PIECES_IN_WAY', 13);
-/**
- * Can't castle kingside, either king or rook has moved
- */
-define('GAMES_CHESS_ERROR_CANT_CQ', 14);
-/**
- * Can't castle queenside, pieces are in the way on the d, c and/or b files
- */
-define('GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY', 15);
-/**
- * Castling would place the king in check, which is illegal
- */
-define('GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK', 16);
-/**
- * Performing a requested move would place the king in check
- */
-define('GAMES_CHESS_ERROR_MOVE_WOULD_CHECK', 17);
-/**
- * The requested move does not remove a check on the king
- */
-define('GAMES_CHESS_ERROR_STILL_IN_CHECK', 18);
-/**
- * An attempt (however misguided) was made to capture one's own piece, illegal
- */
-define('GAMES_CHESS_ERROR_CANT_CAPTURE_OWN', 19);
-/**
- * An attempt was made to capture a piece on a square that does not contain a piece
- */
-define('GAMES_CHESS_ERROR_NO_PIECE', 20);
-/**
- * A attempt to move an opponent's piece was made, illegal
- */
-define('GAMES_CHESS_ERROR_WRONG_COLOR', 21);
-/**
- * A request was made to move a piece from one square to another, but it can't
- * move to that square legally
- */
-define('GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY', 22);
-/**
- * An attempt was made to add a piece to the chessboard, but there are too many
- * pieces of that type already on the chessboard
- */
-define('GAMES_CHESS_ERROR_MULTIPIECE', 23);
-/**
- * An attempt was made to add a piece to the chessboard through the parsing of
- * a FEN, but there are too many pieces of that type already on the chessboard
- */
-define('GAMES_CHESS_ERROR_FEN_MULTIPIECE', 24);
-/**
- * An attempt was made to add a piece to the chessboard on top of an existing piece
- */
-define('GAMES_CHESS_ERROR_DUPESQUARE', 25);
-/**
- * An invalid piece indicator was used in a FEN
- */
-define('GAMES_CHESS_ERROR_FEN_INVALIDPIECE', 26);
-/**
- * Not enough piece data was passed into the FEN to explain every square on the board
- */
-define('GAMES_CHESS_ERROR_FEN_TOOLITTLE', 27);
-/**
- * Something other than "W" or "B" was passed to a method needing a color
- */
-define('GAMES_CHESS_ERROR_INVALID_COLOR', 28);
-/**
- * Something that isn't SAN ([a-h][1-8]) was passed to a function requiring a
- * square location
- */
-define('GAMES_CHESS_ERROR_INVALID_SQUARE', 29);
-/**
- * Something other than "P", "Q", "R", "B", "N" or "K" was passed to a method
- * needing a piece type
- */
-define('GAMES_CHESS_ERROR_INVALID_PIECE', 30);
-/**
- * Something other than "Q", "R", "B", or "N" was passed to a method
- * needing a piece type for pawn promotion
- */
-define('GAMES_CHESS_ERROR_INVALID_PROMOTE', 31);
-/**
- * SAN was passed in that is too ambiguous - multiple pieces could execute
- * the move, and no disambiguation (like Naf3 or Bf3xe4) was used
- */
-define('GAMES_CHESS_ERROR_TOO_AMBIGUOUS', 32);
-/**
- * No piece of the current color can execute the SAN (as in, if Na3 is passed
- * in, but there are no knights that can reach a3
- */
-define('GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT', 33);
-/**
- * In loser's chess, and the current move does not capture a piece although
- * capture is possible.
- */
-define('GAMES_CHESS_ERROR_MOVE_MUST_CAPTURE', 34);
-/**
- * When piece placement is attempted, but no pieces exist to be placed
- */
-define('GAMES_CHESS_ERROR_NOPIECES_TOPLACE', 35);
-/**
- * When piece placement is attempted, but there is a piece on the desired square already
- */
-define('GAMES_CHESS_ERROR_PIECEINTHEWAY', 36);
-/**
- * When a pawn placement on the first or back rank is attempted
- */
-define('GAMES_CHESS_ERROR_CANT_PLACE_18', 37);
 /**
  * ABSTRACT parent class - use {@link Games_Chess_Standard} for a typical
  * chess game
@@ -226,7 +44,233 @@ define('GAMES_CHESS_ERROR_CANT_PLACE_18', 37);
  * - {@link getMoveList()}: Use to retrieve the list of SAN moves for this game
  * @package Games_Chess
  */
-class ChessGame {
+class ChessGame
+{
+
+    /**#@+
+     * Move constants
+     */
+    /**
+     * Castling move (O-O or O-O-O)
+     */
+    const GAMES_CHESS_CASTLE = 1;
+
+    /**
+     * Pawn move (e4, e8=Q, exd5)
+     */
+    const GAMES_CHESS_PAWNMOVE = 2;
+
+    /**
+     * Piece move (Qa4, Nfe6, Bxe5, Re2xe6)
+     */
+    const GAMES_CHESS_PIECEMOVE = 3;
+
+    /**
+     * Special move type used in Wild23 like P@a4 (place a pawn at a4)
+     */
+    const GAMES_CHESS_PIECEPLACEMENT = 4;
+
+    /**#@-*/
+
+    /**#@+
+     * Error Constants
+     */
+    /**
+     * Invalid Standard Algebraic Notation was used
+     */
+    const GAMES_CHESS_ERROR_INVALID_SAN = 1;
+
+    /**
+     * The number of space-separated fields in a FEN passed to {@internal
+     * {@link _parseFen()} through }} {@link resetGame()} was incorrect, should be 6
+     */
+     const GAMES_CHESS_ERROR_FEN_COUNT = 2;
+
+    /**
+     * A FEN containing multiple spaces in a row was parsed {@internal by
+     * {@link _parseFen()}}}
+     */
+    const GAMES_CHESS_ERROR_EMPTY_FEN = 3;
+
+    /**
+     * Too many pieces were passed in for the chessboard to fit them in a FEN
+     * {@internal passed to {@link _parseFen()}}}
+     */
+    const GAMES_CHESS_ERROR_FEN_TOOMUCH = 4;
+
+    /**
+     * The indicator of which side to move in a FEN was neither "w" nor "b"
+     */
+    const GAMES_CHESS_ERROR_FEN_TOMOVEWRONG = 5;
+
+    /**
+     * The list of castling indicators was too long (longest is KQkq) of a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_CASTLETOOLONG = 6;
+
+    /**
+     * Something other than K, Q, k or q was in the castling indicators of a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_CASTLEWRONG = 7;
+
+    /**
+     * The en passant square was neither "-" nor an algebraic square in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALID_EP = 8;
+
+    /**
+     * The ply count (number of half-moves) was not a number in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALID_PLY = 9;
+
+    /**
+     * The move count (pairs of white/black moves) was not a number in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER = 10;
+
+    /**
+     * An illegal move was attempted, the king is in check
+     */
+    const GAMES_CHESS_ERROR_IN_CHECK = 11;
+
+    /**
+     * Can't castle kingside, either king or rook has moved
+     */
+    const GAMES_CHESS_ERROR_CANT_CK = 12;
+
+    /**
+     * Can't castle kingside, pieces are in the way on the f and/or g files
+     */
+    const GAMES_CHESS_ERROR_CK_PIECES_IN_WAY = 13;
+
+    /**
+     * Can't castle kingside, either king or rook has moved
+     */
+    const GAMES_CHESS_ERROR_CANT_CQ = 14;
+
+    /**
+     * Can't castle queenside, pieces are in the way on the d, c and/or b files
+     */
+    const GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY = 15;
+
+    /**
+     * Castling would place the king in check, which is illegal
+     */
+    const GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK = 16;
+
+    /**
+     * Performing a requested move would place the king in check
+     */
+    const GAMES_CHESS_ERROR_MOVE_WOULD_CHECK = 17;
+
+    /**
+     * The requested move does not remove a check on the king
+     */
+    const GAMES_CHESS_ERROR_STILL_IN_CHECK = 18;
+
+    /**
+     * An attempt (however misguided) was made to capture one's own piece, illegal
+     */
+    const GAMES_CHESS_ERROR_CANT_CAPTURE_OWN = 19;
+
+    /**
+     * An attempt was made to capture a piece on a square that does not contain a piece
+     */
+    const GAMES_CHESS_ERROR_NO_PIECE = 20;
+
+    /**
+     * A attempt to move an opponent's piece was made, illegal
+     */
+    const GAMES_CHESS_ERROR_WRONG_COLOR = 21;
+
+    /**
+     * A request was made to move a piece from one square to another, but it can't
+     * move to that square legally
+     */
+    const GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY = 22;
+
+    /**
+     * An attempt was made to add a piece to the chessboard, but there are too many
+     * pieces of that type already on the chessboard
+     */
+    const GAMES_CHESS_ERROR_MULTIPIECE = 23;
+
+    /**
+     * An attempt was made to add a piece to the chessboard through the parsing of
+     * a FEN, but there are too many pieces of that type already on the chessboard
+     */
+    const GAMES_CHESS_ERROR_FEN_MULTIPIECE = 24;
+
+    /**
+     * An attempt was made to add a piece to the chessboard on top of an existing piece
+     */
+    const GAMES_CHESS_ERROR_DUPESQUARE = 25;
+
+    /**
+     * An invalid piece indicator was used in a FEN
+     */
+    const GAMES_CHESS_ERROR_FEN_INVALIDPIECE = 26;
+
+    /**
+     * Not enough piece data was passed into the FEN to explain every square on the board
+     */
+    const GAMES_CHESS_ERROR_FEN_TOOLITTLE = 27;
+
+    /**
+     * Something other than "W" or "B" was passed to a method needing a color
+     */
+    const GAMES_CHESS_ERROR_INVALID_COLOR = 28;
+
+    /**
+     * Something that isn't SAN ([a-h][1-8]) was passed to a function requiring a
+     * square location
+     */
+    const GAMES_CHESS_ERROR_INVALID_SQUARE = 29;
+
+    /**
+     * Something other than "P", "Q", "R", "B", "N" or "K" was passed to a method
+     * needing a piece type
+     */
+    const GAMES_CHESS_ERROR_INVALID_PIECE = 30;
+
+    /**
+     * Something other than "Q", "R", "B", or "N" was passed to a method
+     * needing a piece type for pawn promotion
+     */
+    const GAMES_CHESS_ERROR_INVALID_PROMOTE = 31;
+
+    /**
+     * SAN was passed in that is too ambiguous - multiple pieces could execute
+     * the move, and no disambiguation (like Naf3 or Bf3xe4) was used
+     */
+    const GAMES_CHESS_ERROR_TOO_AMBIGUOUS = 32;
+
+    /**
+     * No piece of the current color can execute the SAN (as in, if Na3 is passed
+     * in, but there are no knights that can reach a3
+     */
+    const GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT = 33;
+
+    /**
+     * In loser's chess, and the current move does not capture a piece although
+     * capture is possible.
+     */
+    const GAMES_CHESS_ERROR_MOVE_MUST_CAPTURE = 34;
+
+    /**
+     * When piece placement is attempted, but no pieces exist to be placed
+     */
+    const GAMES_CHESS_ERROR_NOPIECES_TOPLACE = 35;
+
+    /**
+     * When piece placement is attempted, but there is a piece on the desired square already
+     */
+    const GAMES_CHESS_ERROR_PIECEINTHEWAY = 36;
+
+    /**
+     * When a pawn placement on the first or back rank is attempted
+     */
+    const GAMES_CHESS_ERROR_CANT_PLACE_18 = 37;
 
     /**
      * For representing a game with fewer chars, we can use 2 chars for every possible chess move. we call this "piot move notation"
@@ -554,7 +598,7 @@ class ChessGame {
                     if (count($ambiguous) > 1) {
                         $pieces = implode($ambiguous, ' ');
                         return $this->raiseError(
-                            GAMES_CHESS_ERROR_TOO_AMBIGUOUS,
+                            self::GAMES_CHESS_ERROR_TOO_AMBIGUOUS,
                             array('san' => $parsedmove['piece'] .
                                 $parsedmove['disambiguate'] . $parsedmove['takes']
                                 . $parsedmove['square'],
@@ -683,7 +727,7 @@ class ChessGame {
                            $parsedmove['disambiguate'] . $parsedmove['takes'] .
                            $parsedmove['square'];
         }
-        return $this->raiseError(GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT,
+        return $this->raiseError(self::GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT,
             array('san' => $san,
                   'color' => $color));
     }
@@ -931,7 +975,7 @@ class ChessGame {
                 $oldMoveNumber = $this->_moveNumber;
                 $this->_moveNumber += ($this->_move == 'W') ? 0 : 1;
                 $this->_halfMoves++;
-                if ($key == GAMES_CHESS_CASTLE) {
+                if ($key == self::GAMES_CHESS_CASTLE) {
                     $a = ($parsedMove == 'Q') ? 'K' : 'Q';
                     // clear castling rights
                     $this->{'_' . $this->_move . 'Castle' . $parsedMove} = false;
@@ -1128,7 +1172,7 @@ class ChessGame {
      * Determine whether a side is in checkmate
      * @param W|B color of side to check, defaults to the current side
      * @return boolean
-     * @throws GAMES_CHESS_ERROR_INVALID_COLOR
+     * @throws self::GAMES_CHESS_ERROR_INVALID_COLOR
      */
     function inCheckMate($color = null, $checkingSquares = null)
     {
@@ -1137,7 +1181,7 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!($checking = $checkingSquares)) {
@@ -1181,7 +1225,7 @@ class ChessGame {
      * Determine whether a side is in stalemate
      * @param W|B color of the side to look at, defaults to the current side
      * @return boolean
-     * @throws GAMES_CHESS_ERROR_INVALID_COLOR
+     * @throws self::GAMES_CHESS_ERROR_INVALID_COLOR
      */
     function inStaleMate($color = null)
     {
@@ -1190,7 +1234,7 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if ($this->inCheck($color)) {
@@ -1519,7 +1563,7 @@ class ChessGame {
     function addPiece($color, $type, $square)
     {
         if (!isset($this->_board[$square])) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALIDSQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALIDSQUARE,
                 array('square' => $square));
         }
         if ($this->_board[$square] != $square) {
@@ -1529,7 +1573,7 @@ class ChessGame {
             } else {
                 $dpiece = $dpiece{1};
             }
-            return $this->raiseError(GAMES_CHESS_ERROR_DUPESQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_DUPESQUARE,
                 array('piece' => $type, 'dpiece' => $dpiece, 'square' => $square));
         }
         switch ($type) {
@@ -1553,7 +1597,7 @@ class ChessGame {
                             break 2;
                         }
                     }
-                    return $this->raiseError(GAMES_CHESS_ERROR_MULTIPIECE,
+                    return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
                         array('color' => $color, 'piece' => $type));
 
                 }
@@ -1573,7 +1617,7 @@ class ChessGame {
                             break 2;
                         }
                     }
-                    return $this->raiseError(GAMES_CHESS_ERROR_MULTIPIECE,
+                    return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
                         array('color' => $color, 'piece' => $type));
                 }
             break;
@@ -1587,7 +1631,7 @@ class ChessGame {
                         break 2;
                     }
                 }
-                return $this->raiseError(GAMES_CHESS_ERROR_MULTIPIECE,
+                return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
                     array('color' => $color, 'piece' => $type));
             break;
             case 'K' :
@@ -1595,7 +1639,7 @@ class ChessGame {
                     $this->_pieces[$color . 'K'] = $square;
                     $this->_board[$square] = $color . 'K';
                 } else {
-                    return $this->raiseError(GAMES_CHESS_ERROR_MULTIPIECE,
+                    return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
                         array('color' => $color, 'piece' => $type));
                 }
             break;
@@ -1772,10 +1816,10 @@ class ChessGame {
     function _parseMove($move)
     {
         if ($move == 'O-O') {
-            return array(GAMES_CHESS_CASTLE => 'K');
+            return array(self::GAMES_CHESS_CASTLE => 'K');
         }
         if ($move == 'O-O-O') {
-            return array(GAMES_CHESS_CASTLE => 'Q');
+            return array(self::GAMES_CHESS_CASTLE => 'Q');
         }
         // pawn moves
         if (is_string($move) && preg_match('/^P?(([a-h])([1-8])?(x))?([a-h][1-8])(=?([QRNB]))?$/', $move, $match)) {
@@ -1795,7 +1839,7 @@ class ChessGame {
             if (isset($match[7])) {
                 $res['promote'] = $match[7];
             }
-            return array(GAMES_CHESS_PAWNMOVE => $res);
+            return array(self::GAMES_CHESS_PAWNMOVE => $res);
         // piece moves
         } elseif (is_string($move) && preg_match('/^(K)(x)?([a-h][1-8])$/', $move, $match)) {
             $res = array(
@@ -1805,7 +1849,7 @@ class ChessGame {
                 'takes' => $match[2],
                 'square' => $match[3],
             );
-            return array(GAMES_CHESS_PIECEMOVE => $res);
+            return array(self::GAMES_CHESS_PIECEMOVE => $res);
         } elseif (is_string($move) && preg_match('/^([QRBN])([a-h]|[1-8]|[a-h][1-8])?(x)?([a-h][1-8])$/', $move, $match)) {
             $res = array(
                 'takesfrom' => false,
@@ -1814,26 +1858,26 @@ class ChessGame {
                 'takes' => $match[3],
                 'square' => $match[4],
             );
-            return array(GAMES_CHESS_PIECEMOVE => $res);
+            return array(self::GAMES_CHESS_PIECEMOVE => $res);
         } elseif (is_string($move) && preg_match('/^([QRBN])@([a-h][1-8])$/', $move, $match)) {
             $res = array(
                 'piece' => $match[1],
                 'square' => $match[2],
             );
-            return array(GAMES_CHESS_PIECEPLACEMENT => $res);
+            return array(self::GAMES_CHESS_PIECEPLACEMENT => $res);
         // error
         } elseif (is_string($move) && preg_match('/^([P])@([a-h][2-7])$/', $move, $match)) {
             $res = array(
                 'piece' => $match[1],
                 'square' => $match[2],
             );
-            return array(GAMES_CHESS_PIECEPLACEMENT => $res);
+            return array(self::GAMES_CHESS_PIECEPLACEMENT => $res);
         // error
         } elseif (is_string($move) && preg_match('/^([P])@([a-h][18])$/', $move, $match)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_CANT_PLACE_18, array('san' => $move));
+            return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_PLACE_18, array('san' => $move));
         // error
         } else {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SAN,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SAN,
                 array('pgn' => $move));
         }
     }
@@ -1923,14 +1967,14 @@ class ChessGame {
         } elseif(count($splitfen) == 5) {
           $fen .= ' 1';
         } elseif(count($splitfen) != 6) {
-            return $this->raiseError(GAMES_CHESS_ERROR_FEN_COUNT,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_COUNT,
                 array('fen' => $fen, 'sections' => count($splitfen)));
         }
 
         $splitfen = explode(' ', $fen);
         foreach($splitfen as $index => $test) {
             if ($test == '') {
-                return $this->raiseError(GAMES_CHESS_ERROR_EMPTY_FEN,
+                return $this->raiseError(self::GAMES_CHESS_ERROR_EMPTY_FEN,
                     array('fen' => $fen, 'section' => $index));
             }
         }
@@ -1964,8 +2008,8 @@ class ChessGame {
                     }
 
                     if ($this->isError($err)) {
-                        if ($err->getCode() == GAMES_CHESS_ERROR_MULTIPIECE) {
-                            return $this->raiseError(GAMES_CHESS_ERROR_FEN_MULTIPIECE,
+                        if ($err->getCode() == self::GAMES_CHESS_ERROR_MULTIPIECE) {
+                            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_MULTIPIECE,
                             array('fen' => $fen, 'color' => 'W', 'piece' => $c));
                         } else {
                             return $err;
@@ -1997,8 +2041,8 @@ class ChessGame {
                     }
 
                     if ($this->isError($err)) {
-                        if ($err->getCode() == GAMES_CHESS_ERROR_MULTIPIECE) {
-                            return $this->raiseError(GAMES_CHESS_ERROR_FEN_MULTIPIECE,
+                        if ($err->getCode() == self::GAMES_CHESS_ERROR_MULTIPIECE) {
+                            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_MULTIPIECE,
                             array('fen' => $fen, 'color' => 'B', 'piece' => $c));
                         } else {
                             return $err;
@@ -2023,7 +2067,7 @@ class ChessGame {
                     continue 2;
                 break;
                 default :
-                    return $this->raiseError(GAMES_CHESS_ERROR_FEN_INVALIDPIECE,
+                    return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_INVALIDPIECE,
                         array('fen' => $fen, 'fenchar' => $c));
                 break;
             }
@@ -2031,26 +2075,26 @@ class ChessGame {
             $loc{0} = chr(ord($loc{0}) + 1);
             if (ord($loc{0}) > ord('h')) {
                 if (strlen($FEN) > $idx && $FEN{$idx} != '/') {
-                    return $this->raiseError(GAMES_CHESS_ERROR_FEN_TOOMUCH,
+                    return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_TOOMUCH,
                         array('fen' => $fen));
                 }
             }
         }
         if ($loc != 'i1') {
-            return $this->raiseError(GAMES_CHESS_ERROR_FEN_TOOLITTLE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_TOOLITTLE,
                 array('fen' => $fen));
         }
 
         // parse who's to move
         if (!in_array($splitfen[1], array('w', 'b', 'W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_FEN_TOMOVEWRONG,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_TOMOVEWRONG,
                 array('fen' => $fen, 'tomove' => $splitfen[1]));
         }
         $this->_move = strtoupper($splitfen[1]);
 
         // parse castling rights
         if (strlen($splitfen[2]) > 4) {
-            return $this->raiseError(GAMES_CHESS_ERROR_FEN_CASTLETOOLONG,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLETOOLONG,
                 array('fen' => $fen, 'castle' => $splitfen[2]));
         }
         $this->_WCastleQ = false;
@@ -2076,7 +2120,7 @@ class ChessGame {
                         $this->_BCastleQ = true;
                     break;
                     default:
-                        return $this->raiseError(GAMES_CHESS_ERROR_FEN_CASTLEWRONG,
+                        return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLEWRONG,
                             array('fen' => $fen, 'castle' => $splitfen[2]{$i}));
                     break;
                 }
@@ -2087,7 +2131,7 @@ class ChessGame {
         $this->_enPassantSquare = '-';
         if ($splitfen[3] != '-') {
             if (!preg_match('/^[a-h][36]$/', $splitfen[3])) {
-                return $this->raiseError(GAMES_CHESS_ERROR_FEN_INVALID_EP,
+                return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_INVALID_EP,
                     array('fen' => $fen, 'enpassant' => $splitfen[3]));
             }
             $this->_enPassantSquare = $splitfen[3];
@@ -2095,14 +2139,14 @@ class ChessGame {
 
         // parse half moves since last pawn move or capture
         if (!is_numeric($splitfen[4])) {
-            return $this->raiseError(GAMES_CHESS_ERROR_FEN_INVALID_PLY,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_INVALID_PLY,
                 array('fen' => $fen, 'ply' => $splitfen[4]));
         }
         $this->_halfMoves = $splitfen[4];
 
         // parse move number
         if (!is_numeric($splitfen[5])) {
-            return $this->raiseError(GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER,
                 array('fen' => $fen, 'movenumber' => $splitfen[5]));
         }
         $this->_moveNumber = $splitfen[5];
@@ -2113,15 +2157,15 @@ class ChessGame {
      * Validate a move
      * @param array parsed move array from {@link _parsedMove()}
      * @return true|PEAR_Error
-     * @throws GAMES_CHESS_ERROR_IN_CHECK
-     * @throws GAMES_CHESS_ERROR_CANT_CK
-     * @throws GAMES_CHESS_ERROR_CK_PIECES_IN_WAY
-     * @throws GAMES_CHESS_ERROR_CANT_CQ
-     * @throws GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY
-     * @throws GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK
-     * @throws GAMES_CHESS_ERROR_CANT_CAPTURE_OWN
-     * @throws GAMES_CHESS_ERROR_STILL_IN_CHECK
-     * @throws GAMES_CHESS_ERROR_MOVE_WOULD_CHECK
+     * @throws self::GAMES_CHESS_ERROR_IN_CHECK
+     * @throws self::GAMES_CHESS_ERROR_CANT_CK
+     * @throws self::GAMES_CHESS_ERROR_CK_PIECES_IN_WAY
+     * @throws self::GAMES_CHESS_ERROR_CANT_CQ
+     * @throws self::GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY
+     * @throws self::GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK
+     * @throws self::GAMES_CHESS_ERROR_CANT_CAPTURE_OWN
+     * @throws self::GAMES_CHESS_ERROR_STILL_IN_CHECK
+     * @throws self::GAMES_CHESS_ERROR_MOVE_WOULD_CHECK
      * @access protected
      */
     function _validMove($move, $from = null)
@@ -2131,10 +2175,10 @@ class ChessGame {
         $this->startTransaction();
         $valid = false;
         switch ($type) {
-            case GAMES_CHESS_CASTLE :
+            case self::GAMES_CHESS_CASTLE :
                 if ($this->inCheck($this->_move)) {
                     $this->rollbackTransaction();
-                    return $this->raiseError(GAMES_CHESS_ERROR_IN_CHECK);
+                    return $this->raiseError(self::GAMES_CHESS_ERROR_IN_CHECK);
                 }
                 if ($this->_move == 'W') {
                   $intRow = 1;
@@ -2147,7 +2191,7 @@ class ChessGame {
 
                   if (!$this->{'_' . $this->_move . 'CastleK'}) {
                       $this->rollbackTransaction();
-                      return $this->raiseError(GAMES_CHESS_ERROR_CANT_CK);
+                      return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_CK);
                   }
 
                   //find left most column (either kings starting point or rooks ending point)
@@ -2172,7 +2216,7 @@ class ChessGame {
                     if ($this->_board[$this->objNumberToColumn[$i] . $intRow] != ($this->objNumberToColumn[$i] . $intRow)) {
                       //there is a piece in the way!
                       $this->rollbackTransaction();
-                      return $this->raiseError(GAMES_CHESS_ERROR_CK_PIECES_IN_WAY);
+                      return $this->raiseError(self::GAMES_CHESS_ERROR_CK_PIECES_IN_WAY);
                     }
                   }
 
@@ -2182,7 +2226,7 @@ class ChessGame {
 
                   if (!$this->{'_' . $this->_move . 'CastleQ'}) {
                       $this->rollbackTransaction();
-                      return $this->raiseError(GAMES_CHESS_ERROR_CANT_CK);
+                      return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_CK);
                   }
 
                   //find left most column (either rooks starting point or kings ending point)
@@ -2207,7 +2251,7 @@ class ChessGame {
                     if ($this->_board[$this->objNumberToColumn[$i] . $intRow] != ($this->objNumberToColumn[$i] . $intRow)) {
                       //there is a piece in the way!
                       $this->rollbackTransaction();
-                      return $this->raiseError(GAMES_CHESS_ERROR_CK_PIECES_IN_WAY);
+                      return $this->raiseError(self::GAMES_CHESS_ERROR_CK_PIECES_IN_WAY);
                     }
                   }
 
@@ -2237,14 +2281,14 @@ class ChessGame {
                     $this->_moveAlgebraic($on, $square);
                     if ($this->inCheck($this->_move)) {
                         $this->rollbackTransaction();
-                        return $this->raiseError(GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK);
+                        return $this->raiseError(self::GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK);
                     }
                     $on = $square;
                 }
                 $valid = true;
             break;
-            case GAMES_CHESS_PIECEMOVE :
-            case GAMES_CHESS_PAWNMOVE :
+            case self::GAMES_CHESS_PIECEMOVE :
+            case self::GAMES_CHESS_PAWNMOVE :
                 if (!$this->isError($piecesq = $from? $from: $this->_getSquareFromParsedMove($info))) {
                     $colorMoving = $this->_move;
                     // $wasinCheck = $this->inCheck($colorMoving);  //KK
@@ -2253,7 +2297,7 @@ class ChessGame {
                           $info['square']) {
                         if (!($info['square'] == $this->_enPassantSquare &&
                               $info['piece'] == 'P')) {
-                            return $this->raiseError(GAMES_CHESS_ERROR_NO_PIECE,
+                            return $this->raiseError(self::GAMES_CHESS_ERROR_NO_PIECE,
                                 array('square' => $info['square']));
                         }
                     }
@@ -2261,11 +2305,11 @@ class ChessGame {
                     $valid = !$this->inCheck($colorMoving);
                     // if ($wasinCheck && !$valid) {
                         // $this->rollbackTransaction();
-                        // return $this->raiseError(GAMES_CHESS_ERROR_STILL_IN_CHECK);
+                        // return $this->raiseError(self::GAMES_CHESS_ERROR_STILL_IN_CHECK);
                     // } elseif (!$valid) {
                     if (!$valid) {
                         $this->rollbackTransaction();
-                        return $this->raiseError(GAMES_CHESS_ERROR_MOVE_WOULD_CHECK);
+                        return $this->raiseError(self::GAMES_CHESS_ERROR_MOVE_WOULD_CHECK);
                     }
                 } else {
                     $this->rollbackTransaction();
@@ -2284,11 +2328,11 @@ class ChessGame {
      * @param string [a-h][1-8] square piece moves to
      * @param string Q|R|B|N
      * @return string|PEAR_Error
-     * @throws GAMES_CHESS_ERROR_INVALID_PROMOTE
-     * @throws GAMES_CHESS_ERROR_INVALID_SQUARE
-     * @throws GAMES_CHESS_ERROR_NO_PIECE
-     * @throws GAMES_CHESS_ERROR_WRONG_COLOR
-     * @throws GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY
+     * @throws self::GAMES_CHESS_ERROR_INVALID_PROMOTE
+     * @throws self::GAMES_CHESS_ERROR_INVALID_SQUARE
+     * @throws self::GAMES_CHESS_ERROR_NO_PIECE
+     * @throws self::GAMES_CHESS_ERROR_WRONG_COLOR
+     * @throws self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY
      */
     function _convertSquareToSAN($from, $to, $promote = '')
     {
@@ -2297,25 +2341,25 @@ class ChessGame {
         }
         $promote = strtoupper($promote);
         if (!in_array($promote, array('Q', 'B', 'N', 'R'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_PROMOTE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_PROMOTE,
                 array('piece' => $promote));
         }
         $SAN = '';
         if (!preg_match('/^[a-h][1-8]$/', $from)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $from));
         }
         if (!preg_match('/^[a-h][1-8]$/', $to)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $to));
         }
         $piece = $this->_squareToPiece($from);
         if (!$piece) {
-            return $this->raiseError(GAMES_CHESS_ERROR_NO_PIECE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_NO_PIECE,
                 array('square' => $from));
         }
         if ($piece['color'] != $this->_move) {
-            return $this->raiseError(GAMES_CHESS_ERROR_WRONG_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_WRONG_COLOR,
                 array('square' => $from));
         }
 
@@ -2331,7 +2375,7 @@ class ChessGame {
         } else {
           $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
           if (!in_array($to, $moves)) {
-              return $this->raiseError(GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
+              return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
                   array('from' => $from, 'to' => $to));
           }  //KK end
         }
@@ -2396,9 +2440,9 @@ class ChessGame {
      * @param B|W color of the piece
      * @param boolean Whether to return shortcut king moves for castling
      * @return array|PEAR_Error
-     * @throws GAMES_CHESS_ERROR_INVALID_COLOR
-     * @throws GAMES_CHESS_ERROR_INVALID_SQUARE
-     * @throws GAMES_CHESS_ERROR_INVALID_PIECE
+     * @throws self::GAMES_CHESS_ERROR_INVALID_COLOR
+     * @throws self::GAMES_CHESS_ERROR_INVALID_SQUARE
+     * @throws self::GAMES_CHESS_ERROR_INVALID_PIECE
      */
     function getPossibleMoves($piece, $square, $color = null, $returnCastleMoves = true)
     {
@@ -2407,16 +2451,16 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         $piece = strtoupper($piece);
         if (!in_array($piece, array('K', 'Q', 'B', 'N', 'R', 'P'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_PIECE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_PIECE,
                 array('piece' => $piece));
         }
         switch ($piece) {
@@ -2743,7 +2787,7 @@ class ChessGame {
      * Default is the color that is about to move
      * @param W|B
      * @return array|PEAR_Error
-     * @throws GAMES_CHESS_ERROR_INVALID_COLOR
+     * @throws self::GAMES_CHESS_ERROR_INVALID_COLOR
      */
     function getPieceLocations($color = null)
     {
@@ -2752,7 +2796,7 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         return $this->_getAllPieceLocations($color);
@@ -2792,11 +2836,11 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         $allmoves = $this->_getKnightSquares($square);
@@ -2817,11 +2861,11 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         $allmoves = $this->_getDiagonals($square);
@@ -2892,11 +2936,11 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         $allmoves = $this->_getRookSquares($square);
@@ -2986,11 +3030,11 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         if (is_null($enpassant)) {
@@ -3067,11 +3111,11 @@ class ChessGame {
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_COLOR,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         $newret = $castleret = array();
@@ -3107,7 +3151,7 @@ class ChessGame {
     function getDiagonalColor($square)
     {
         if (!preg_match('/^[a-h][1-8]$/', $square)) {
-            return $this->raiseError(GAMES_CHESS_ERROR_INVALID_SQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         return $this->_getDiagonalColor($square);
@@ -3147,14 +3191,14 @@ class ChessGame {
     /**
      * @param integer error code from {@link Chess.php}
      * @param array associative array of additional error message data
-     * @uses PEAR::raiseError()
+     * @uses \PEAR::raiseError()
      * @return PEAR_Error
      */
     function raiseError($code, $extra = array())
     {
         //Do NOT F with this please. throwing exception here will break this whole library
         require_once 'PEAR.php';
-        return PEAR::raiseError($this->getMessage($code, $extra), $code,
+        return \PEAR::raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
 
@@ -3169,79 +3213,79 @@ class ChessGame {
     function getMessage($code, $extra)
     {
         $messages = array(
-            GAMES_CHESS_ERROR_INVALID_SAN =>
+            self::GAMES_CHESS_ERROR_INVALID_SAN =>
                 '"%pgn%" is not a valid algebraic move',
-            GAMES_CHESS_ERROR_FEN_COUNT =>
+            self::GAMES_CHESS_ERROR_FEN_COUNT =>
                 'Invalid FEN - "%fen%" has %sections% fields, 6 is required',
-            GAMES_CHESS_ERROR_EMPTY_FEN =>
+            self::GAMES_CHESS_ERROR_EMPTY_FEN =>
                 'Invalid FEN - "%fen%" has an empty field at index %section%',
-            GAMES_CHESS_ERROR_FEN_TOOMUCH =>
+            self::GAMES_CHESS_ERROR_FEN_TOOMUCH =>
                 'Invalid FEN - "%fen%" has too many pieces for a chessboard',
-            GAMES_CHESS_ERROR_FEN_TOMOVEWRONG =>
+            self::GAMES_CHESS_ERROR_FEN_TOMOVEWRONG =>
                 'Invalid FEN - "%fen%" has invalid to-move indicator, must be "w" or "b"',
-            GAMES_CHESS_ERROR_FEN_CASTLETOOLONG =>
+            self::GAMES_CHESS_ERROR_FEN_CASTLETOOLONG =>
                 'Invalid FEN - "%fen%" the castling indicator (KQkq) is too long',
-            GAMES_CHESS_ERROR_FEN_CASTLEWRONG =>
+            self::GAMES_CHESS_ERROR_FEN_CASTLEWRONG =>
                 'Invalid FEN - "%fen%" the castling indicator "%castle%" is invalid',
-            GAMES_CHESS_ERROR_FEN_INVALID_EP =>
+            self::GAMES_CHESS_ERROR_FEN_INVALID_EP =>
                 'Invalid FEN - "%fen%" the en passant square indicator "%enpassant%" is invalid',
-            GAMES_CHESS_ERROR_FEN_INVALID_PLY =>
+            self::GAMES_CHESS_ERROR_FEN_INVALID_PLY =>
                 'Invalid FEN - "%fen%" the half-move ply count "%ply%" is not a number',
-            GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER =>
+            self::GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER =>
                 'Invalid FEN - "%fen%" the move number "%movenumber%" is not a number',
-            GAMES_CHESS_ERROR_IN_CHECK =>
+            self::GAMES_CHESS_ERROR_IN_CHECK =>
                 'The king is in check and that move does not prevent check',
-            GAMES_CHESS_ERROR_CANT_CK =>
+            self::GAMES_CHESS_ERROR_CANT_CK =>
                 'Can\'t castle kingside, either the king or rook has moved',
-            GAMES_CHESS_ERROR_CK_PIECES_IN_WAY =>
+            self::GAMES_CHESS_ERROR_CK_PIECES_IN_WAY =>
                 'Can\'t castle kingside, pieces are in the way',
-            GAMES_CHESS_ERROR_CANT_CQ =>
+            self::GAMES_CHESS_ERROR_CANT_CQ =>
                 'Can\'t castle queenside, either the king or rook has moved',
-            GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY =>
+            self::GAMES_CHESS_ERROR_CQ_PIECES_IN_WAY =>
                 'Can\'t castle queenside, pieces are in the way',
-            GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK =>
+            self::GAMES_CHESS_ERROR_CASTLE_WOULD_CHECK =>
                 'Can\'t castle, it would put the king in check',
-            GAMES_CHESS_ERROR_MOVE_WOULD_CHECK =>
+            self::GAMES_CHESS_ERROR_MOVE_WOULD_CHECK =>
                 'That move would put the king in check',
-            GAMES_CHESS_ERROR_STILL_IN_CHECK =>
+            self::GAMES_CHESS_ERROR_STILL_IN_CHECK =>
                 'The move does not remove the check on the king',
-            GAMES_CHESS_ERROR_CANT_CAPTURE_OWN =>
+            self::GAMES_CHESS_ERROR_CANT_CAPTURE_OWN =>
                 'Cannot capture your own pieces',
-            GAMES_CHESS_ERROR_NO_PIECE =>
+            self::GAMES_CHESS_ERROR_NO_PIECE =>
                 'There is no piece on square %square%',
-            GAMES_CHESS_ERROR_WRONG_COLOR =>
+            self::GAMES_CHESS_ERROR_WRONG_COLOR =>
                 'The piece on %square% is not your piece',
-            GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY =>
+            self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY =>
                 'The piece on %from% cannot move to %to%',
-            GAMES_CHESS_ERROR_MULTIPIECE =>
+            self::GAMES_CHESS_ERROR_MULTIPIECE =>
                 'Too many %color% %piece%s',
-            GAMES_CHESS_ERROR_FEN_MULTIPIECE =>
+            self::GAMES_CHESS_ERROR_FEN_MULTIPIECE =>
                 'Invalid FEN - "%fen%" Too many %color% %piece%s',
-            GAMES_CHESS_ERROR_DUPESQUARE =>
+            self::GAMES_CHESS_ERROR_DUPESQUARE =>
                 '%dpiece% already occupies square %square%, cannot be replaced by %piece%',
-            GAMES_CHESS_ERROR_FEN_INVALIDPIECE =>
+            self::GAMES_CHESS_ERROR_FEN_INVALIDPIECE =>
                 'Invalid FEN - "%fen%" the character "%fenchar%" is not a valid piece, separator or number',
-            GAMES_CHESS_ERROR_FEN_TOOLITTLE =>
+            self::GAMES_CHESS_ERROR_FEN_TOOLITTLE =>
                 'Invalid FEN - "%fen%" has too few pieces for a chessboard',
-            GAMES_CHESS_ERROR_INVALID_COLOR =>
+            self::GAMES_CHESS_ERROR_INVALID_COLOR =>
                 '"%color%" is not a valid piece color, try W or B',
-            GAMES_CHESS_ERROR_INVALID_SQUARE =>
+            self::GAMES_CHESS_ERROR_INVALID_SQUARE =>
                 '"%square%" is not a valid square, must be between a1 and h8',
-            GAMES_CHESS_ERROR_INVALID_PIECE =>
+            self::GAMES_CHESS_ERROR_INVALID_PIECE =>
                 '"%piece%" is not a valid piece, must be P, Q, R, N, K or B',
-            GAMES_CHESS_ERROR_INVALID_PROMOTE =>
+            self::GAMES_CHESS_ERROR_INVALID_PROMOTE =>
                 '"%piece%" is not a valid promotion piece, must be Q, R, N or B',
-            GAMES_CHESS_ERROR_TOO_AMBIGUOUS =>
+            self::GAMES_CHESS_ERROR_TOO_AMBIGUOUS =>
                 '"%san%" does not resolve ambiguity between %piece%s on %squares%',
-            GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT =>
+            self::GAMES_CHESS_ERROR_NOPIECE_CANDOTHAT =>
                 'There are no %color% pieces on the board that can do "%san%"',
-            GAMES_CHESS_ERROR_MOVE_MUST_CAPTURE =>
+            self::GAMES_CHESS_ERROR_MOVE_MUST_CAPTURE =>
                 'Capture is possible, "%san%" does not capture',
-            GAMES_CHESS_ERROR_NOPIECES_TOPLACE =>
+            self::GAMES_CHESS_ERROR_NOPIECES_TOPLACE =>
                 'There are no captured %color% %piece%s available to place',
-            GAMES_CHESS_ERROR_PIECEINTHEWAY =>
+            self::GAMES_CHESS_ERROR_PIECEINTHEWAY =>
                 'There is already a piece on %square%, cannot place another there',
-            GAMES_CHESS_ERROR_CANT_PLACE_18 =>
+            self::GAMES_CHESS_ERROR_CANT_PLACE_18 =>
                 'Placing a piece on the first or back rank is illegal (%san%)',
         );
         $message = $messages[$code];
@@ -3526,5 +3570,4 @@ class ChessGame {
         }
         return $ret;
     }
-
 }

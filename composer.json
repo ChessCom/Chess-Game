@@ -1,0 +1,21 @@
+{
+    "name": "chesscom/chess-game",
+    "description": "Represents a chess game as a php object",
+    "keywords": ["chess", "php"],
+    "homepage": "https://github.com/ChessCom/Chess-Game",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chess team",
+            "homepage": "http://www.chess.com"
+        }
+    ],
+    "require": {
+        "php":                            ">=5.3.2"
+    },
+    "autoload": {
+        "psr-0": { "Chess\\Game": "" }
+    },
+    "target-dir": "Chess/Game"
+}
