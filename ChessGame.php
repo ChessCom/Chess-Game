@@ -3191,14 +3191,14 @@ class ChessGame
     /**
      * @param integer error code from {@link Chess.php}
      * @param array associative array of additional error message data
-     * @uses PEAR::raiseError()
+     * @uses \PEAR::raiseError()
      * @return PEAR_Error
      */
     function raiseError($code, $extra = array())
     {
         //Do NOT F with this please. throwing exception here will break this whole library
         require_once 'PEAR.php';
-        return PEAR::raiseError($this->getMessage($code, $extra), $code,
+        return \PEAR::raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
 
