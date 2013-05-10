@@ -1,5 +1,5 @@
 {
-    "name": "chess/game-chess",
+    "name": "chess/chess-game",
     "description": "Represents a chess game as a php object",
     "keywords": ["chess", "php"],
     "homepage": "https://github.com/ChessCom/Chess-Game",
