@@ -1,5 +1,7 @@
 <?php
 
+namespace Chess\Game;
+
 /**
  * ABSTRACT parent class - use {@link Games_Chess_Standard} for a typical
  * chess game
@@ -42,7 +44,8 @@
  * - {@link getMoveList()}: Use to retrieve the list of SAN moves for this game
  * @package Games_Chess
  */
-class ChessGame {
+class ChessGame
+{
 
     /**#@+
      * Move constants
@@ -3567,5 +3570,4 @@ class ChessGame {
         }
         return $ret;
     }
-
 }
