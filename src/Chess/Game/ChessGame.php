@@ -1022,10 +1022,10 @@ class ChessGame
                         $parsedMove['promote'] : '';
                     $this->_moveAlgebraic($movedfrom, $parsedMove['square'], $promote);
                     if ($parsedMove['takes']) {
-                        $this->_halfMoves = 1;
+                        $this->_halfMoves = 0;
                     }
                     if ($parsedMove['piece'] == 'P') {
-                        $this->_halfMoves = 1;
+                        $this->_halfMoves = 0;
                         $this->_enPassantSquare = '-';
                         if (in_array($movedfrom{1} - $parsedMove['square']{1},
                               array(2, -2))) {
