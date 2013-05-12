@@ -14,10 +14,174 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->game = new ChessGame();
     }
 
+    public function testAddPiece()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'P', 'a7');
+        $this->assertEquals('8/p7/8/8/8/8/8/8 w KQkq - 1 1', $this->game->renderFen());
+    }
+
+    public function testAddPieceInvalidPromotedPawnForBishopKnightRook()
+    {
+        foreach (array('B', 'N', 'R') as $piece) {
+            $this->game->blankBoard();
+            $this->game->addPiece('B', 'P', 'a7');
+            $this->game->addPiece('B', 'P', 'b7');
+            $this->game->addPiece('B', 'P', 'c7');
+            $this->game->addPiece('B', 'P', 'd7');
+            $this->game->addPiece('B', 'P', 'e7');
+            $this->game->addPiece('B', 'P', 'f7');
+            $this->game->addPiece('B', 'P', 'g7');
+            $this->game->addPiece('B', 'P', 'h7');
+
+            $this->game->addPiece('B', $piece, 'a8');
+            $this->game->addPiece('B', $piece, 'h8');
+            $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', $piece, 'a1'));
+        }
+    }
+
+    public function testAddPieceInvalidPromotedPawnForQueen()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'P', 'a7');
+        $this->game->addPiece('B', 'P', 'b7');
+        $this->game->addPiece('B', 'P', 'c7');
+        $this->game->addPiece('B', 'P', 'd7');
+        $this->game->addPiece('B', 'P', 'e7');
+        $this->game->addPiece('B', 'P', 'f7');
+        $this->game->addPiece('B', 'P', 'g7');
+        $this->game->addPiece('B', 'P', 'h7');
+
+        $this->game->addPiece('B', 'Q', 'd8');
+        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'Q', 'a1'));
+    }
+
+    public function testAddPiecePromotedPawnForBishopKnightRook()
+    {
+        foreach (array('B', 'N', 'R') as $piece) {
+            $this->game->blankBoard();
+            $this->game->addPiece('B', $piece, 'a8');
+            $this->game->addPiece('B', $piece, 'h8');
+            $this->assertTrue($this->game->addPiece('B', $piece, 'a1'));
+        }
+    }
+
+    public function testAddPiecePromotedPawnForQueen()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'Q', 'd8');
+        $this->assertTrue($this->game->addPiece('B', 'Q', 'a1'));
+    }
+
+    public function testAddPieceInvalidAddingKingWhenAlreadyExists()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'K', 'e8');
+        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'K', 'a6'));
+    }
+
+    public function testAddPieceInvalidAddingPawnWhenAllAlreadyExist()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'P', 'a7');
+        $this->game->addPiece('B', 'P', 'b7');
+        $this->game->addPiece('B', 'P', 'c7');
+        $this->game->addPiece('B', 'P', 'd7');
+        $this->game->addPiece('B', 'P', 'e7');
+        $this->game->addPiece('B', 'P', 'f7');
+        $this->game->addPiece('B', 'P', 'g7');
+        $this->game->addPiece('B', 'P', 'h7');
+        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'P', 'a6'));
+    }
+
+    public function testAddPieceInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('W', 'P', 'g9'));
+    }
+
+    public function testAddPieceSquareInvalidBecauseSquareIsAlreadyOccupiedNonPawnStartingRank()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'Q', 'a8');
+        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'K', 'a8'));
+    }
+
+    public function testAddPieceSquareInvalidBecauseSquareIsAlreadyOccupiedPawnStartingRank()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('B', 'P', 'a7');
+        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'Q', 'a7'));
+    }
+
     public function testBlankBoardFen()
     {
         $this->game->blankBoard();
         $this->assertEquals('8/8/8/8/8/8/8/8 w KQkq - 1 1', $this->game->renderFen());
+    }
+
+    public function testCastlingBlackFromTheKingSide()
+    {
+        $startFen   = 'rnbqk2r/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR b KQkq a3 0 4';
+        $endFen     = 'rnbq1rk1/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR w KQ - 1 5';
+        $moves      = array('O-O');
+
+        $this->game->resetGame($startFen);
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $this->assertEquals($endFen, $this->game->renderFen());
+        $this->assertTrue($this->game->canCastleKingside());
+    }
+
+    public function testCastlingBlackFromTheQueenSide()
+    {
+        $startFen   = 'r3kbnr/pp3ppp/n2pb3/q1p1p3/P3P1PP/1PPP4/5P2/RNBQKBNR b KQkq - 0 7';
+        $endFen     = '2kr1bnr/pp3ppp/n2pb3/q1p1p3/P3P1PP/1PPP4/5P2/RNBQKBNR w KQ - 1 8';
+        $moves      = array('O-O-O');
+
+        $this->game->resetGame($startFen);
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $this->assertEquals($endFen, $this->game->renderFen());
+        $this->assertTrue($this->game->canCastleQueenside());
+    }
+
+    public function testCastlingWhiteFromTheKingSide()
+    {
+        $startFen   = 'rnbqkbnr/4pppp/8/pppp4/5PP1/5N1B/PPPPP2P/RNBQK2R w KQkq a6 0 5';
+        $endFen     = 'rnbqkbnr/4pppp/8/pppp4/5PP1/5N1B/PPPPP2P/RNBQ1RK1 b kq - 1 5';
+        $moves      = array('O-O');
+
+        $this->game->resetGame($startFen);
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $this->assertEquals($endFen, $this->game->renderFen());
+        $this->assertTrue($this->game->canCastleKingside());
+    }
+
+    public function testCastlingWhiteFromTheQueenSide()
+    {
+        $startFen   = 'rnbqkbnr/3pppp1/p1p5/1p5p/3P1B2/2NQ4/PPP1PPPP/R3KBNR w KQkq - 0 5';
+        $endFen     = 'rnbqkbnr/3pppp1/p1p5/1p5p/3P1B2/2NQ4/PPP1PPPP/2KR1BNR b kq - 1 5';
+        $moves      = array('O-O-O');
+
+        $this->game->resetGame($startFen);
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $this->assertEquals($endFen, $this->game->renderFen());
+        $this->assertTrue($this->game->canCastleQueenside());
     }
 
     /**
@@ -80,11 +244,355 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($endFen, $this->game->renderFen());
     }
 
+    public function testGameOverDueToCheckmate()
+    {
+        $startFen = '3k2R1/8/3K4/8/8/8/8/8 b - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertEquals('W', $this->game->gameOver());
+    }
+
+    public function testGameOverDueToDraw()
+    {
+        $startFen = '7k/4N3/4NK2/5B2/8/8/8/r7 w - - 100 112';
+
+        $this->game->resetGame($startFen);
+        $this->assertEquals('D', $this->game->gameOver());
+    }
+
+    /*
+     * According to the Wikipedia page describing FEN notation, segment 5 (Half-Move clock)
+     * is the number of half moves since the last pawn advance or capture. This means that
+     * after either of those events, the clock should be reset to 0. The game library
+     * presently resets to one, thus the counter is off by one.
+     *
+     * The following sequence of moves and the resulting FEN is provided on the linked
+     * page and was used to verify the bug's existence and subsequent fix.
+     *
+     * @link http://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
+     */
+    public function testHalfMoveBugFix()
+    {
+        $this->game->resetGame();
+        $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $this->game->renderFen());
+
+        $this->game->moveSAN('e4');
+        $this->assertEquals('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', $this->game->renderFen());
+
+        $this->game->moveSAN('c5');
+        $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2', $this->game->renderFen());
+
+        $this->game->moveSAN('Nf3');
+        $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', $this->game->renderFen());
+    }
+
+    public function testIsInBasicDrawKingBishopVersusKingBishopWithBishopsOnSameColor()
+    {
+        $startFen = '7B/8/8/8/8/6k1/1b6/5K2 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->inBasicDraw());
+    }
+
+    public function testIsInBasicDrawKingVersusKing()
+    {
+        $startFen = '8/5k2/8/8/6K1/8/8/8 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->inBasicDraw());
+    }
+
+    public function testIsInBasicDrawKingVersusKingWithBishopOrKnight()
+    {
+        foreach (array('b', 'B', 'N', 'n') as $piece) {
+            $startFen = sprintf('8/2%s2k2/8/8/6K1/8/8/8 w - -', $piece);
+
+            $this->game->resetGame($startFen);
+            $this->assertTrue($this->game->inBasicDraw());
+        }
+    }
+
+    public function testIsInCheckmate()
+    {
+        $startFen = '3k2R1/8/3K4/8/8/8/8/8 b - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->inCheckMate());
+    }
+
+    public function testIsInCheckmateInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->inCheckMate('COLOR_X'));
+    }
+
+    public function testIsInFiftyRuleDraw()
+    {
+        $startFen = '7k/4N3/4NK2/5B2/8/8/8/r7 w - - 100 112';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->in50MoveDraw());
+        $this->assertTrue($this->game->inDraw());
+    }
+
+    /**
+     * FEN for board setup from Karpov vs. Kasparov, Tilburg, 1991
+     *
+     * @link http://en.wikipedia.org/wiki/Fifty-move_rule#Karpov_vs._Kasparov
+     */
+    public function testIsInStalemate()
+    {
+        $startFen = '7k/5Q2/6K1/8/8/8/8/8 b - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->inStaleMate());
+        $this->assertTrue($this->game->inDraw());
+    }
+
+    public function testIsInStalemateInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->inStaleMate('COLOR_X'));
+    }
+
+    /**
+     * FEN for board setup and subsequent moves from Fischer versus Petrosian, 1971
+     *
+     * @link http://en.wikipedia.org/wiki/Threefold_repetition#Fischer_versus_Petrosian.2C_1971
+     * @link http://chesstempo.com/gamedb/game/2695095
+     */
+    public function testIsInThreefoldRepetitionDraw()
+    {
+        $this->game->resetGame('8/pp3p1k/2p2q1p/3r1P1Q/5R2/7P/P1P2P2/7K w - - 1 30');
+
+        $moves = array(
+            30  => array('white' => 'Qe2',  'black' => 'Qe5'),
+            31  => array('white' => 'Qh5',  'black' => 'Qf6'),
+            32  => array('white' => 'Qe2',  'black' => 'Re5'),
+            33  => array('white' => 'Qd3',  'black' => 'Rd5'),
+            34  => array('white' => 'Qe2',),
+        );
+
+        foreach ($moves as $playerMoves) {
+            foreach ($playerMoves as $move) {
+                $this->game->moveSAN($move);
+            }
+        }
+
+        $this->assertTrue($this->game->inRepetitionDraw());
+
+        // TODO: Figure out why inRepetitionDraw() called from inDraw() doesn't work, but direct call does
+        //$this->assertTrue($this->game->inDraw());
+    }
+
+    public function testIsNotInBasicDrawKingBishopVersusKingBishopBecauseBishopsOnDifferentColors()
+    {
+        $startFen = '6B1/8/8/8/8/6k1/1b6/5K2 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
+    public function testIsNotInBasicDrawTooManyBlackBishops()
+    {
+        $startFen = '6B1/1b6/8/8/8/6k1/1b6/5K2 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
+    public function testIsNotInBasicDrawTooManyBlackPieces()
+    {
+        $startFen = '6B1/1p6/8/8/8/6k1/1b6/5K2 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
+    public function testIsNotInBasicDrawTooManyWhiteBishops()
+    {
+        $startFen = '6B1/1B6/8/8/8/6k1/1b6/5K2 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
+    public function testIsNotInBasicDrawTooManyWhitePieces()
+    {
+        $startFen = '6B1/1P6/8/8/8/6k1/1b6/5K2 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
+    public function testIsNotInFiftyRuleDraw()
+    {
+        $this->game->resetGame();
+        $this->assertFalse($this->game->in50MoveDraw());
+    }
+
+    public function testIsNotGameOver()
+    {
+        $this->game->resetGame();
+        $this->assertFalse($this->game->gameOver());
+    }
+
+    public function testIsNotInStalemateBecauseHasLegalMoves()
+    {
+        $startFen = 'rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inStaleMate());
+    }
+
+    public function testIsNotInStalemateBecauseIsInCheck()
+    {
+        $startFen = '8/8/2k4/8/8/8/2R4/4K3 b KQkq - 1 2';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inStaleMate());
+    }
+
+    public function testIsInNotThreefoldRepetitionDraw()
+    {
+        $this->game->resetGame();
+        $this->assertFalse($this->game->inRepetitionDraw());
+    }
+
+    public function testIsNotPromoteMove()
+    {
+        $this->game->resetGame();
+        $this->game->moveSAN('e4');
+        $this->game->moveSAN('c5');
+        $this->assertFalse($this->game->isPromoteMove('e4', 'e5'));
+    }
+
+    public function testIsNotPromoteMoveIllegalMove()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'B', 'a1');
+        $this->game->addPiece('W', 'B', 'h1');
+        $this->game->addPiece('W', 'P', 'b7');
+        $this->assertFalse($this->game->isPromoteMove('b7', 'a7'));
+    }
+
+    public function testIsPromoteMove()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'B', 'a1');
+        $this->game->addPiece('W', 'B', 'h1');
+        $this->game->addPiece('W', 'P', 'b7');
+        $this->assertTrue($this->game->isPromoteMove('b7', 'b8'));
+    }
+
+    public function testMoveList()
+    {
+        $moves = array('Nf3', 'Nf6', 'c4', 'e6', 'Nc3', 'Bb4');
+
+        $this->game->resetGame();
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $moveList = $this->game->getMoveList();
+        $this->assertTrue(is_array($moveList));
+        $this->assertEquals(3, count($moveList));
+
+        foreach ($moveList as $madeMoves) {
+            $this->assertTrue(is_array($madeMoves));
+            $this->assertEquals(2, count($madeMoves));
+        }
+
+        $this->assertEquals('Nf3', $moveList[1][0]);
+        $this->assertEquals('Nf6', $moveList[1][1]);
+
+        $this->assertEquals('c4', $moveList[2][0]);
+        $this->assertEquals('e6', $moveList[2][1]);
+
+        $this->assertEquals('Nc3', $moveList[3][0]);
+        $this->assertEquals('Bb4', $moveList[3][1]);
+    }
+
+    public function testMoveListString()
+    {
+        $moves = array('Nf3', 'Nf6', 'c4', 'e6', 'Nc3', 'Bb4');
+
+        $this->game->resetGame();
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $moveList = $this->game->getMoveListString();
+        $this->assertTrue(is_string($moveList));
+        $this->assertEquals('1.Nf3 Nf6 2.c4 e6 3.Nc3 Bb4', $moveList);
+    }
+
+    public function testMoveListWithChecks()
+    {
+        $moves      = array('Rf1', 'Kb6', 'Rf6', 'Kb5', 'Rf5', 'Kb6');
+        $startFen   = '8/8/k7/8/8/8/4K3/4R3 w - -';
+
+        $this->game->resetGame($startFen);
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $moveList = $this->game->getMoveList(true);
+        $this->assertTrue(is_array($moveList));
+        $this->assertEquals(3, count($moveList));
+
+        foreach ($moveList as $madeMoves) {
+            $this->assertTrue(is_array($madeMoves));
+            $this->assertEquals(2, count($madeMoves));
+        }
+
+        $this->assertEquals('Rf1', $moveList[1][0]);
+        $this->assertEquals('Kb6', $moveList[1][1]);
+
+        $this->assertEquals('Rf6+', $moveList[2][0]);
+        $this->assertEquals('Kb5', $moveList[2][1]);
+
+        $this->assertEquals('Rf5+', $moveList[3][0]);
+        $this->assertEquals('Kb6', $moveList[3][1]);
+    }
+
+    public function testMoveListStringWithChecks()
+    {
+        $moves      = array('Rf1', 'Kb6', 'Rf6', 'Kb5', 'Rf5', 'Kb6');
+        $startFen   = '8/8/k7/8/8/8/4K3/4R3 w - -';
+
+        $this->game->resetGame($startFen);
+
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $moveList = $this->game->getMoveListString(true);
+        $this->assertTrue(is_string($moveList));
+        $this->assertEquals('1.Rf1 Kb6 2.Rf6+ Kb5 3.Rf5+ Kb6', $moveList);
+    }
+
     public function testNewChess960GameRenderedFen()
     {
         $this->game->resetGame(false, true);
         $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $this->game->renderFen());
     }
+
+    // XXX: Parsing a legitimate Chess960 FEN appears to be horked
+    /**
+     * Set up a new Chess960 board. FEN generated at lichness.org
+     *
+     * @link http://en.lichess.org
+     */
+//    public function testNewChess960GameRenderedFen()
+//    {
+//        $fen = 'nrnbbkqr/pppppppp/8/8/8/8/PPPPPPPP/NRNBBKQR w KQkq - 0 1 ';
+//        $this->game->resetGame($fen, true);
+//        $this->assertEquals($fen, $this->game->renderFen());
+//    }
 
     public function testNewStandardGameFen()
     {
@@ -112,30 +620,54 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -', $this->game->renderFen(false));
     }
 
-    /*
-     * According to the Wikipedia page describing FEN notation, segment 5 (Half-Move clock)
-     * is the number of half moves since the last pawn advance or capture. This means that
-     * after either of those events, the clock should be reset to 0. The game library
-     * presently resets to one, thus the counter is off by one.
-     *
-     * The following sequence of moves and the resulting FEN is provided on the linked
-     * page and was used to verify the bug's existence and subsequent fix.
-     *
-     * @link http://en.wikipedia.org/wiki/Forsyth-Edwards_Notation
-     */
-    public function testHalfMoveBugFix()
+    public function testToArray()
+    {
+        $piecesToSet = array(
+            'a2' => array('color' => 'B', 'piece' => 'P'),
+            'd1' => array('color' => 'B', 'piece' => 'Q'),
+            'd8' => array('color' => 'W', 'piece' => 'Q'),
+        );
+
+        $this->game->blankBoard();
+
+        foreach ($piecesToSet as $square => $data) {
+            $this->game->addPiece($data['color'], $data['piece'], $square);
+        }
+
+        $gameBoardArray = $this->game->toArray();
+        $this->assertTrue(is_array($gameBoardArray));
+        $this->assertEquals(64, count($gameBoardArray));
+
+        $referenceArray = array();
+
+        foreach (array(1, 2, 3, 4, 5, 6, 7, 8) as $column) {
+            foreach (array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h') as $rank) {
+                $index = $rank . $column;
+
+                if (array_key_exists($index, $piecesToSet)) {
+                    $color  = $piecesToSet[$index]['color'];
+                    $piece  = $piecesToSet[$index]['piece'];
+                    $referenceArray[$index] = ('W' == $color) ? $piece : strtolower($piece);
+                } else {
+                    $referenceArray[$index] = false;
+                }
+            }
+        }
+
+        $this->assertEquals($referenceArray, $gameBoardArray);
+    }
+
+    public function testToMoveBlack()
     {
         $this->game->resetGame();
-        $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $this->game->renderFen());
+        $this->assertEquals('W', $this->game->toMove());
+    }
 
+    public function testToMoveWhite()
+    {
+        $this->game->resetGame();
         $this->game->moveSAN('e4');
-        $this->assertEquals('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', $this->game->renderFen());
-
-        $this->game->moveSAN('c5');
-        $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2', $this->game->renderFen());
-
-        $this->game->moveSAN('Nf3');
-        $this->assertEquals('rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2', $this->game->renderFen());
+        $this->assertEquals('B', $this->game->toMove());
     }
 
     public function testValidMovesFromStartingFen()
