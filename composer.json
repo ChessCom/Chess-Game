@@ -17,7 +17,12 @@
     "require-dev": {
         "doctrine/common": "~2.3",
         "symfony/property-access": "~2.2",
+        "fabpot/php-cs-fixer": "*",
         "phpunit/phpunit": "3.7.*"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
     },
     "autoload": {
         "psr-0": {
