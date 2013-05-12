@@ -20,7 +20,9 @@
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-0": { "Chess\\Game": "" }
+        "psr-0": {
+            "Chess\\Game": "src/"
+        }
     },
     "target-dir": "Chess/Game"
 }
