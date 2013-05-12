@@ -3372,68 +3372,6 @@ class ChessGame
         }
     }
 
-    /**
-     * Determine whether a piece name is a bishop
-     *
-     * This does NOT take an algebraic square as the argument, but the contents
-     * of _board[algebraic square]
-     * @param string
-     * @return boolean
-     * @access protected
-     */
-    function isBishop($piecename)
-    {
-        return $piecename{1} == 'B' ||
-            ($piecename{1} == 'P' &&
-                $this->_pieces[$piecename][1] == 'B');
-    }
-
-    /**
-     * Determine whether a piece name is a rook
-     *
-     * This does NOT take an algebraic square as the argument, but the contents
-     * of _board[algebraic square]
-     * @param string
-     * @return boolean
-     * @access protected
-     */
-    function isRook($piecename)
-    {
-        return $piecename{1} == 'R' ||
-            ($piecename{1} == 'P' &&
-                $this->_pieces[$piecename][1] == 'R');
-    }
-
-    /**
-     * Determine whether a piece name is a pawn
-     *
-     * This does NOT take an algebraic square as the argument, but the contents
-     * of _board[algebraic square]
-     * @param string
-     * @return boolean
-     * @access protected
-     */
-    function isPawn($piecename)
-    {
-        return $piecename{1} == 'P' &&
-                $this->_pieces[$piecename][1] == 'P';
-    }
-
-    /**
-     * Determine whether a piece name is a king
-     *
-     * This does NOT take an algebraic square as the argument, but the contents
-     * of _board[algebraic square]
-     * @param string
-     * @return boolean
-     * @access protected
-     */
-    function isKing($piecename)
-    {
-        return $piecename{1} == 'K';
-    }
-
-
     function _isKnight($piecename)
     {
         return $piecename{1} == 'N' ||
@@ -3488,17 +3426,6 @@ class ChessGame
             }
         }
         return false;
-    }
-
-    /**
-     * Retrieve the color of a piece from its name
-     *
-     * Game-specific method of retrieving the color of a piece
-     * @access protected
-     */
-    function _getColor($name)
-    {
-        return $name{0};
     }
 
     /**
