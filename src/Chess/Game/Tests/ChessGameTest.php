@@ -260,6 +260,271 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('D', $this->game->gameOver());
     }
 
+    public function testGetDiagonalColor()
+    {
+        $this->game->resetGame();
+        $this->assertEquals('B', $this->game->getDiagonalColor('d4'));
+        $this->assertEquals('W', $this->game->getDiagonalColor('a8'));
+    }
+
+    public function testGetDiagonalColorInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getDiagonalColor('SQUARE_X'));
+    }
+
+    public function testGetPieceLocationsColorBlack()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'K', 'a1');
+        $this->game->addPiece('W', 'Q', 'h1');
+        $this->game->addPiece('B', 'P', 'c7');
+
+        $locations = $this->game->getPieceLocations('B');
+        $this->assertEquals(1, count($locations));
+        $this->assertTrue(in_array('c7', $locations));
+    }
+
+    public function testGetPieceLocationsColorWhite()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'K', 'a1');
+        $this->game->addPiece('W', 'Q', 'h1');
+        $this->game->addPiece('B', 'P', 'c7');
+
+        $locations = $this->game->getPieceLocations('W');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('a1', $locations));
+        $this->assertTrue(in_array('h1', $locations));
+    }
+
+    public function testGetPieceLocationsInvalidColorParameterError()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'K', 'a1');
+        $this->game->addPiece('W', 'Q', 'h1');
+        $this->game->addPiece('B', 'P', 'c7');
+
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPieceLocations('COLOR_X'));
+    }
+
+    public function testGetPieceLocationsNoColorSpecified()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'K', 'a1');
+        $this->game->addPiece('W', 'Q', 'h1');
+        $this->game->addPiece('B', 'P', 'c7');
+
+        $locations = $this->game->getPieceLocations();
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('a1', $locations));
+        $this->assertTrue(in_array('h1', $locations));
+    }
+
+    public function testGetPossibleBishopMovesNoColorSpecified()
+    {
+        $this->game->resetGame();
+        $this->game->moveSAN('e4');
+        $this->game->moveSAN('c5');
+
+        $locations = $this->game->getPossibleBishopMoves('f1');
+        $this->assertEquals(5, count($locations));
+        $this->assertTrue(in_array('e2', $locations));
+        $this->assertTrue(in_array('d3', $locations));
+        $this->assertTrue(in_array('c4', $locations));
+        $this->assertTrue(in_array('b5', $locations));
+        $this->assertTrue(in_array('a6', $locations));
+    }
+
+    public function testGetPossibleBishopMovesInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleBishopMoves('f1', 'COLOR_X'));
+    }
+
+    public function testGetPossibleBishopMovesInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleBishopMoves('SQUARE_X'));
+    }
+
+    public function testGetPossibleKingMovesNoColorSpecified()
+    {
+        $this->game->resetGame();
+        $this->game->moveSAN('e4');
+        $this->game->moveSAN('c5');
+        $locations = $this->game->getPossibleKingMoves('e1');
+
+        $this->assertEquals(3, count($locations));
+        $this->assertTrue(in_array('c1', $locations));
+        $this->assertTrue(in_array('g1', $locations));
+        $this->assertTrue(in_array('e2', $locations));
+    }
+
+    public function testGetPossibleKingMovesInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleKingMoves('e1', 'COLOR_X'));
+    }
+
+    public function testGetPossibleKingMovesInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleKingMoves('SQUARE_X'));
+    }
+
+    public function testGetPossibleKnightMovesNoColorSpecified()
+    {
+        $this->game->resetGame();
+
+        $locations = $this->game->getPossibleKnightMoves('g1');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('f3', $locations));
+        $this->assertTrue(in_array('h3', $locations));
+    }
+
+    public function testGetPossibleKnightMovesInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleKnightMoves('g1', 'COLOR_X'));
+    }
+
+    public function testGetPossibleKnightMovesInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleKnightMoves('SQUARE_X'));
+    }
+
+    public function testGetPossibleMovesInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleMoves('P', 'a2', 'COLOR_X'));
+    }
+
+    public function testGetPossibleMovesInvalidPieceParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleMoves('PIECE_X', 'a2'));
+    }
+
+    public function testGetPossibleMovesInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleMoves('P', 'SQUARE_X'));
+    }
+
+    public function testGetPossibleMovesNoColorSpecified()
+    {
+        $this->game->resetGame();
+        $moves = $this->game->getPossibleMoves('P', 'a2');
+        $this->assertEquals(2, count($moves));
+        $this->assertTrue(in_array('a3', $moves));
+        $this->assertTrue(in_array('a4', $moves));
+    }
+
+    public function testGetPossiblePawnMovesNoColorSpecified()
+    {
+        $this->game->resetGame();
+
+        $locations = $this->game->getPossiblePawnMoves('h2');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('h3', $locations));
+        $this->assertTrue(in_array('h3', $locations));
+    }
+
+    public function testGetPossiblePawnMovesInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossiblePawnMoves('h2', 'COLOR_X'));
+    }
+
+    public function testGetPossiblePawnMovesInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossiblePawnMoves('SQUARE_X'));
+    }
+
+    public function testGetPossiblePawnMovesEnPassantBlackSideOne()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'P', 'c2');
+        $this->game->addPiece('B', 'P', 'd4');
+
+        $this->game->moveSAN('c4');
+
+        $locations = $this->game->getPossiblePawnMoves('d4');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('c3', $locations));
+        $this->assertTrue(in_array('d3', $locations));
+    }
+
+    public function testGetPossiblePawnMovesEnPassantBlackSideTwo()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'P', 'e2');
+        $this->game->addPiece('B', 'P', 'd4');
+
+        $this->game->moveSAN('e4');
+
+        $locations = $this->game->getPossiblePawnMoves('d4');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('d3', $locations));
+        $this->assertTrue(in_array('e3', $locations));
+    }
+
+    public function testGetPossiblePawnMovesEnPassantWhiteSideOne()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'P', 'e4');
+        $this->game->addPiece('B', 'P', 'd7');
+
+        $this->game->moveSAN('e5');
+        $this->game->moveSAN('d5');
+
+        $locations = $this->game->getPossiblePawnMoves('e5');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('d6', $locations));
+        $this->assertTrue(in_array('e6', $locations));
+    }
+
+    public function testGetPossiblePawnMovesEnPassantWhiteSideTwo()
+    {
+        $this->game->blankBoard();
+        $this->game->addPiece('W', 'P', 'e4');
+        $this->game->addPiece('B', 'P', 'f7');
+
+        $this->game->moveSAN('e5');
+        $this->game->moveSAN('f5');
+
+        $locations = $this->game->getPossiblePawnMoves('e5');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('e6', $locations));
+        $this->assertTrue(in_array('f6', $locations));
+    }
+
+    public function testGetPossibleRookMovesInvalidColorParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleRookMoves('h1', 'COLOR_X'));
+    }
+    public function testGetPossibleRookMovesInvalidSquareParameterError()
+    {
+        $this->game->resetGame();
+        $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleRookMoves('SQUARE_X'));
+    }
+
+    public function testGetPossibleRookMovesNoColorSpecified()
+    {
+        $this->game->resetGame();
+        $this->game->moveSAN('h4');
+        $this->game->moveSAN('c5');
+
+        $locations = $this->game->getPossibleRookMoves('h1');
+        $this->assertEquals(2, count($locations));
+        $this->assertTrue(in_array('h2', $locations));
+        $this->assertTrue(in_array('h3', $locations));
+    }
+
     /*
      * According to the Wikipedia page describing FEN notation, segment 5 (Half-Move clock)
      * is the number of half moves since the last pawn advance or capture. This means that
@@ -618,6 +883,25 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
     {
         $this->game->resetGame();
         $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -', $this->game->renderFen(false));
+    }
+
+    public function testState()
+    {
+        $this->game->resetGame();
+
+        $originalState = $this->game->getState();
+        $this->game->moveSAN('e4');
+
+        $newState = $this->game->getState();
+        $this->assertTrue($newState === $this->game->getState());
+        $this->assertFalse($newState === $originalState);
+
+        $this->game->setState($originalState);
+        $this->assertFalse($newState === $this->game->getState());
+        $this->assertTrue($originalState === $this->game->getState());
+
+        $this->game->commitTransaction();
+        $this->assertTrue($originalState === $this->game->getState());
     }
 
     public function testToArray()
