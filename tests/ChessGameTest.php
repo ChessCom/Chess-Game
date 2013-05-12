@@ -1,11 +1,5 @@
 <?php
-/**
- * Created by Vadzim Lukiashka.
- * User: vadziml
- * Date: 1/9/13
- * Time: 12:10 AM
- */
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+
 require_once 'library/ChessGame.php';
 
 class ChessGameTest extends PHPUnit_Framework_TestCase

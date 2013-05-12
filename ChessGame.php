@@ -847,7 +847,7 @@ class ChessGame
         foreach ($this->_pieces as $name => $loc) {
             if (!$loc) {
                 continue;
-            }
+                }
             if ($name{0} == $color) {
                 if ($name{1} == 'P') {
                     $ret[$name] = $this->getPossibleMoves($loc[1], $loc[0], $color, false);
