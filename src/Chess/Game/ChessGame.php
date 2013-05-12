@@ -1251,14 +1251,7 @@ class ChessGame
                     $this->startTransaction();
                     $this->_move = $color;
 
-                    try {
-                        $err = $this->moveSquare($a, $move);
-                    } catch (\Exception $e) {
-                        //do nothing
-                    }
-
-                    $this->rollbackTransaction();
-                    if (!is_object($err)) {
+                    if (! $this->isError($this->moveSquare($a, $move))) {
                         return false;
                     }
                 }
