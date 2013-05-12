@@ -1215,9 +1215,6 @@ class ChessGame
         foreach ($moves as $escape) {
             $this->startTransaction();
             $this->_move = $color;
-            if (!class_exists('PEAR')) {
-                require_once 'PEAR.php';
-            }
 
             try {
                 $this->moveSquare($king, $escape);
@@ -1270,9 +1267,6 @@ class ChessGame
                 foreach ($canmove as $move) {
                     $this->startTransaction();
                     $this->_move = $color;
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
 
                     try {
                         $err = $this->moveSquare($a, $move);
@@ -2036,10 +2030,6 @@ class ChessGame
                 case "B" :
                 case "N" :
                 case "P" :
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
-
                     try {
                         $err = $this->addPiece('W', $c, $loc);
                     } catch (\Exception $e) {
@@ -2069,10 +2059,6 @@ class ChessGame
                 case "b" :
                 case "n" :
                 case "p" :
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
-
                     try {
                         $err = $this->addPiece('B', strtoupper($c), $loc);
                     } catch (\Exception $e) {
@@ -3264,8 +3250,6 @@ class ChessGame
     public function raiseError($code, $extra = array())
     {
         //Do NOT F with this please. throwing exception here will break this whole library
-        require_once 'PEAR.php';
-
         return \PEAR::raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
@@ -3569,9 +3553,6 @@ class ChessGame
                     // if so, then the piece is pinned and cannot move
                     $this->startTransaction();
                     $this->_move = $color;
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
 
                     try {
                         $ret = $this->moveSquare($value, $square);
