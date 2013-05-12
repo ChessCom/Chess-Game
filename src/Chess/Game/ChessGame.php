@@ -469,21 +469,6 @@ class ChessGame
       8 => 'h'
     );
 
-    function &factory($type = 'Standard')
-    {
-        if (!class_exists("Games_Chess_$type")) {
-            @include_once 'Games/Chess/' . ucfirst(strtolower($type)) . '.php';
-        }
-        if (class_exists("Games_Chess_$type")) {
-            $type = "Games_Chess_$type";
-            $a = new $type;
-            return $a;
-        } else {
-            $a = false;
-            return $a;
-        }
-    }
-
     /**
      * Create a blank chessboard with no pieces on it
      */
