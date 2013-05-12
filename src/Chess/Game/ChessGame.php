@@ -1118,8 +1118,9 @@ class ChessGame
     function getMoveListString($withChecks = false) {
       if ($withChecks) {
         $objMoveList = $this->_movesWithCheck;
+      } else {
+        $objMoveList = $this->_moves;
       }
-      $objMoveList = $this->_moves;
       $strMoveList = "";
       $intCount=0;
       foreach($objMoveList as $key => $objMove) {
