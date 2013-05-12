@@ -1537,7 +1537,7 @@ class ChessGame
     function addPiece($color, $type, $square)
     {
         if (!isset($this->_board[$square])) {
-            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALIDSQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         if ($this->_board[$square] != $square) {
