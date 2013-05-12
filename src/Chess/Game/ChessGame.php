@@ -3233,7 +3233,8 @@ class ChessGame
     public function raiseError($code, $extra = array())
     {
         //Do NOT F with this please. throwing exception here will break this whole library
-        return \PEAR::raiseError($this->getMessage($code, $extra), $code,
+        $pear = new \PEAR();
+        return $pear->raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
 
