@@ -583,7 +583,7 @@ class ChessGame
                     }
                 } else {
                     $others = array();
-                    $others = $this->_getAllPieceSquares($parsedmove['piece'],
+                    $others = $this->getAllPieceSquares($parsedmove['piece'],
                                                          $color);
                     $disambiguate = '';
                     $ambiguous = array();
@@ -790,9 +790,9 @@ class ChessGame
         case 'N':
             return abs($x1 - $x2) == 1 && abs($y1 - $y2) == 2 || abs($x1 - $x2) == 2 && abs($y1 - $y2) == 1;
         case 'B':
-            return $this->_isBishopThreat($x1, $y1, $x2, $y2);
+            return $this->isBishopThreat($x1, $y1, $x2, $y2);
         case 'Q':
-            return $this->_isBishopThreat($x1, $y1, $x2, $y2) || $this->isRookThreat($x1, $y1, $x2, $y2);
+            return $this->isBishopThreat($x1, $y1, $x2, $y2) || $this->isRookThreat($x1, $y1, $x2, $y2);
         case 'K':
             return abs($x1 - $x2) <= 1 && abs($y1 - $y2) <= 1;
         }
@@ -821,7 +821,8 @@ class ChessGame
 
         return false;
     }
-    public function _isBishopThreat($x1, $y1, $x2, $y2)
+
+    private function isBishopThreat($x1, $y1, $x2, $y2)
     {
         if (abs($x1 - $x2) == abs($y1 - $y2)) {
             $dx = $x1 < $x2? 1: -1;
@@ -842,7 +843,7 @@ class ChessGame
         return false;
     }
 
-    public function _getPossibleChecks($color)
+    pritave function getPossibleChecks($color)
     {
         $ret = array();
         foreach ($this->_pieces as $name => $loc) {
@@ -860,7 +861,8 @@ class ChessGame
 
         return $ret;
     }
-    public function _getAllPieceSquares($piece, $color, $exclude = null)
+
+    private function getAllPieceSquares($piece, $color, $exclude = null)
     {
         $ret = array();
         foreach ($this->_pieces as $name => $loc) {
@@ -1261,7 +1263,7 @@ class ChessGame
         if ($this->inCheck($color)) {
             return false;
         }
-        $moves = $this->_getPossibleChecks($color);
+        $moves = $this->getPossibleChecks($color);
         foreach ($moves as $name => $canmove) {
             if (count($canmove)) {
                 $a = $this->_getPiece($name);
@@ -2428,7 +2430,7 @@ class ChessGame
         }
         $others = array();
         if ($piece['piece'] != 'K' && $piece['piece'] != 'P') {
-            $others = $this->_getAllPieceSquares($piece['piece'],
+            $others = $this->getAllPieceSquares($piece['piece'],
                                                  $piece['color'], $from);
         }
         $disambiguate = '';
