@@ -892,7 +892,7 @@ class ChessGame
         return $ret;
     }
 
-    public function _getKing($color = null)
+    private function getKing($color = null)
     {
         if (!is_null($color)) {
             return $this->_pieces[$color . 'K'];
@@ -910,7 +910,7 @@ class ChessGame
      * @return string|array
      * @access protected
      */
-    public function _getPiece($piecename)
+    private function getPiece($piecename)
     {
         return is_array($this->_pieces[$piecename]) ?
             $this->_pieces[$piecename][0] :
@@ -1211,7 +1211,7 @@ class ChessGame
                 return false;
             }
         }
-        $moves = $this->getPossibleKingMoves($king = $this->_getKing($color), $color);
+        $moves = $this->getPossibleKingMoves($king = $this->getKing($color), $color);
         foreach ($moves as $escape) {
             $this->startTransaction();
             $this->_move = $color;
@@ -1266,7 +1266,7 @@ class ChessGame
         $moves = $this->getPossibleChecks($color);
         foreach ($moves as $name => $canmove) {
             if (count($canmove)) {
-                $a = $this->_getPiece($name);
+                $a = $this->getPiece($name);
                 foreach ($canmove as $move) {
                     $this->startTransaction();
                     $this->_move = $color;
@@ -1363,7 +1363,7 @@ class ChessGame
      */
     public function inBasicDraw()
     {
-        $pieces = $this->_getPieceTypes();
+        $pieces = $this->getPieceTypes();
         $blackpieces = array_keys($pieces['B']);
         $whitepieces = array_keys($pieces['W']);
 
@@ -2413,7 +2413,7 @@ class ChessGame
         }
 
         if ($piece['piece'] == 'K') {
-          if ((($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) || (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) || !in_array($to, $this->_getKingSquares($from))) {
+          if ((($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) || (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) || !in_array($to, $this->getKingSquares($from))) {
             // this is a castling attempt
             if ($this->objColumnToNumber[$from{0}] < $this->objColumnToNumber[$to{0}]) {
                 return 'O-O';
@@ -2807,7 +2807,7 @@ class ChessGame
      * @return array
      * @access protected
      */
-    public function _getKingSquares($square)
+    private function getKingSquares($square)
     {
         $squares = array();
         if (ord($square{0}) - ord('a')) {
@@ -2846,7 +2846,7 @@ class ChessGame
      * @return array|PEAR_Error
      * @throws self::GAMES_CHESS_ERROR_INVALID_COLOR
      */
-    public function getPieceLocations($color = null)
+    private function getPieceLocations($color = null)
     {
         if (is_null($color)) {
             $color = $this->_move;
@@ -3183,7 +3183,7 @@ class ChessGame
                 array('square' => $square));
         }
         $newret = $castleret = array();
-        $ret = $this->_getKingSquares($square);
+        $ret = $this->getKingSquares($square);
         if ($returnCastleMoves) {
             $castleret = $this->_getCastleSquares($square);
         }
@@ -3622,7 +3622,7 @@ class ChessGame
      * </pre>
      * @access protected
      */
-    public function _getPieceTypes()
+    private function getPieceTypes()
     {
         $ret = array('W' => array(), 'B' => array());
         foreach ($this->_pieces as $name => $loc) {
