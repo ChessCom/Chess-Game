@@ -557,7 +557,7 @@ class ChessGame
         return true;
     }
 
-    public function getSquareFromParsedMove($parsedmove, $color = null)
+    private function getSquareFromParsedMove($parsedmove, $color = null)
     {
         if (is_null($color)) {
             $color = $this->_move;
@@ -762,7 +762,7 @@ class ChessGame
         return $ret;
     }
 
-    public function _isEmptySquare($square)
+    private function isEmptySquare($square)
     {
         return $this->_board[$square] == $square;
     }
@@ -801,7 +801,7 @@ class ChessGame
     {
         if ($y1 == $y2) {
             for ($x = min($x1, $x2) + 1; $x < max($x1, $x2); $x++) {
-                if (!$this->_isEmptySquare(chr($x + ord('a')) . chr($y1 + ord('1')))) {
+                if (!$this->isEmptySquare(chr($x + ord('a')) . chr($y1 + ord('1')))) {
                     return false;
                 }
             }
@@ -810,7 +810,7 @@ class ChessGame
         }
         if ($x1 == $x2) {
             for ($y = min($y1, $y2) + 1; $y < max($y1, $y2); $y++) {
-                if (!$this->_isEmptySquare(chr($x1 + ord('a')) . chr($y + ord('1')))) {
+                if (!$this->isEmptySquare(chr($x1 + ord('a')) . chr($y + ord('1')))) {
                     return false;
                 }
             }
@@ -828,7 +828,7 @@ class ChessGame
             $x = $x1 + $dx;
             $y = $y1 + $dy;
             while ($x != $x2) {
-                if (!$this->_isEmptySquare(chr($x + ord('a')) . chr($y + ord('1')))) {
+                if (!$this->isEmptySquare(chr($x + ord('a')) . chr($y + ord('1')))) {
                     return false;
                 }
                 $x += $dx;
