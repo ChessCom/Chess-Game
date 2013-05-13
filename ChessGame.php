@@ -746,7 +746,7 @@ class ChessGame
         foreach ($this->_pieces as $name => $loc) {
             if ($name{0} == $opposite_color) {
                 $enemy_loc = (is_array($loc) ? $loc[0] : $loc);
-                if ($enemy_loc && $this->_isThreat($enemy_loc, $king_loc)) {
+                if ($enemy_loc && $this->isThreat($enemy_loc, $king_loc)) {
                     $ret[] = $enemy_loc;
                 }
             }
@@ -767,7 +767,7 @@ class ChessGame
         return $this->_board[$square] == $square;
     }
 
-    public function _isThreat($from, $to)
+    private function isThreat($from, $to)
     {
         $x1 = ord($from{0}) - ord('a');
         $y1 = ord($from{1}) - ord('1');
