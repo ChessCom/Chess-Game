@@ -843,7 +843,7 @@ class ChessGame
         return false;
     }
 
-    pritave function getPossibleChecks($color)
+    private function getPossibleChecks($color)
     {
         $ret = array();
         foreach ($this->_pieces as $name => $loc) {
