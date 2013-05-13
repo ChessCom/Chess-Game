@@ -917,7 +917,7 @@ class ChessGame
             $this->_pieces[$piecename];
     }
 
-    public function _takePiece($piece)
+    private function takePiece($piece)
     {
         if (isset($this->_pieces[$this->_board[$piece]])) {
             $this->_pieces[$this->_board[$piece]] = false;
@@ -927,7 +927,7 @@ class ChessGame
     /**
      * Move a piece from one square to another, disregarding any existing pieces
      *
-     * {@link _takePiece()} should always be used prior to this method.  No
+     * {@link takePiece()} should always be used prior to this method.  No
      * validation is performed
      * @param string [a-h][1-8] square the piece resides on
      * @param string [a-h][1-8] square the piece moves to
@@ -1806,12 +1806,12 @@ class ChessGame
       if ($to == $this->_enPassantSquare && $this->isPawn($this->_board[$from])) {
           $rank = ($to{1} == '3') ? '4' : '5';
           // this piece was just taken
-          $this->_takePiece($to{0} . $rank);
+          $this->takePiece($to{0} . $rank);
           $this->_board[$to{0} . $rank] = $to{0} . $rank;
       }
       if ($this->_board[$to] != $to) {
           // this piece was just taken
-          $this->_takePiece($to);
+          $this->takePiece($to);
       }
       // mark the piece as moved
       $this->_movePiece($from, $to, $promote);
