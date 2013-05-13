@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by Vadzim Lukiashka.
- * User: vadziml
- * Date: 1/9/13
- * Time: 12:10 AM
- */
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
-require_once 'library/ChessGame.php';
+
+use Chess\Game\ChessGame;
 
 class ChessGameTest extends PHPUnit_Framework_TestCase
 {
@@ -18,21 +12,20 @@ class ChessGameTest extends PHPUnit_Framework_TestCase
         $objChessGame = new ChessGame();
         $objChessGame->resetGame($fen);
 
-//        Should not be any exception here
+        // should not be any exception here
         foreach ($moves as $objMoveData) {
-            if ($objMoveData['white']) {
+            if (isset($objMoveData['white'])) {
                 $strCleanMove = $this->cleanSANMove($objMoveData['white']);
                 $objChessGame->moveSAN($strCleanMove);
             }
 
-            if ($objMoveData['black']) {
+            if (isset($objMoveData['black'])) {
                 $strCleanMove = $this->cleanSANMove($objMoveData['black']);
                 $objChessGame->moveSAN($strCleanMove);
             }
         }
     }
 
-//    TODO: add more combinations if needed
     public function dataProvider()
     {
         return array(
