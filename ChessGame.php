@@ -786,18 +786,19 @@ class ChessGame
 
             return false;
         case 'R':
-            return $this->_isRookThreat($x1, $y1, $x2, $y2);
+            return $this->isRookThreat($x1, $y1, $x2, $y2);
         case 'N':
             return abs($x1 - $x2) == 1 && abs($y1 - $y2) == 2 || abs($x1 - $x2) == 2 && abs($y1 - $y2) == 1;
         case 'B':
             return $this->_isBishopThreat($x1, $y1, $x2, $y2);
         case 'Q':
-            return $this->_isBishopThreat($x1, $y1, $x2, $y2) || $this->_isRookThreat($x1, $y1, $x2, $y2);
+            return $this->_isBishopThreat($x1, $y1, $x2, $y2) || $this->isRookThreat($x1, $y1, $x2, $y2);
         case 'K':
             return abs($x1 - $x2) <= 1 && abs($y1 - $y2) <= 1;
         }
     }
-    public function _isRookThreat($x1, $y1, $x2, $y2)
+
+    private function isRookThreat($x1, $y1, $x2, $y2)
     {
         if ($y1 == $y2) {
             for ($x = min($x1, $x2) + 1; $x < max($x1, $x2); $x++) {
