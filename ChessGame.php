@@ -933,7 +933,7 @@ class ChessGame
      * @param string [a-h][1-8] square the piece moves to
      * @param string Piece to promote to if this is a promotion move
      */
-    public function _movePiece($from, $to, $promote = '')
+    private function movePiece($from, $to, $promote = '')
     {
         if (isset($this->_pieces[$this->_board[$from]])) {
             $newto = $this->_pieces[$this->_board[$from]];
@@ -1814,7 +1814,7 @@ class ChessGame
           $this->takePiece($to);
       }
       // mark the piece as moved
-      $this->_movePiece($from, $to, $promote);
+      $this->movePiece($from, $to, $promote);
       $this->_board[$to] = $this->_board[$from];
       $this->_board[$from] = $from;
     }
@@ -1829,7 +1829,7 @@ class ChessGame
       $strPiece = $this->_board[$to];
 
       // mark the piece as moved
-      $this->_movePiece($from, $to);
+      $this->movePiece($from, $to);
       $this->_board[$to] = $this->_board[$from];
       $this->_board[$from] = $from;
 
