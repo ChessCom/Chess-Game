@@ -557,7 +557,7 @@ class ChessGame
         return true;
     }
 
-    public function _getSquareFromParsedMove($parsedmove, $color = null)
+    public function getSquareFromParsedMove($parsedmove, $color = null)
     {
         if (is_null($color)) {
             $color = $this->_move;
@@ -1030,7 +1030,7 @@ class ChessGame
                     }
                     $this->_enPassantSquare = '-';
                 } else {
-                    $movedfrom = $from? $from: $this->_getSquareFromParsedMove($parsedMove);
+                    $movedfrom = $from? $from: $this->getSquareFromParsedMove($parsedMove);
                     $this->_moveFromSquare = $movedfrom;
                     $this->_lastMove = $parsedMove;
                     $promote = isset($parsedMove['promote']) ?
@@ -2332,7 +2332,7 @@ class ChessGame
             break;
             case self::GAMES_CHESS_PIECEMOVE :
             case self::GAMES_CHESS_PAWNMOVE :
-                if (!$this->isError($piecesq = $from? $from: $this->_getSquareFromParsedMove($info))) {
+                if (!$this->isError($piecesq = $from? $from: $this->getSquareFromParsedMove($info))) {
                     $colorMoving = $this->_move;
                     // $wasinCheck = $this->inCheck($colorMoving);  //KK
                     $piece = $this->_board[$info['square']];
