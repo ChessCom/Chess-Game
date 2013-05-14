@@ -1340,9 +1340,9 @@ class ChessGame
 
         if (count($blackpieces) > 2 || count($whitepieces) > 2) {
           return false;
-        } elseif(array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
+        } elseif (array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
           return false;
-        } elseif(array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
+        } elseif (array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
           return false;
         }
 
@@ -1365,9 +1365,9 @@ class ChessGame
                 }
             } else {
                 if (in_array($whitepieces[0], array('N', 'B'))) {
-                  if(array_key_exists('N', $pieces['W']) && is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
+                  if (array_key_exists('N', $pieces['W']) && is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
                     return false;
-                  } elseif(array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
+                  } elseif (array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
                     return false;
                   } else {
                     return true;
@@ -1397,9 +1397,9 @@ class ChessGame
                 }
             } else {
                 if (in_array($blackpieces[0], array('N', 'B'))) {
-                  if(array_key_exists('N', $pieces['B']) && is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
+                  if (array_key_exists('N', $pieces['B']) && is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
                     return false;
-                  } elseif(array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
+                  } elseif (array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
                     return false;
                   } else {
                     return true;
@@ -3230,6 +3230,7 @@ class ChessGame
     {
         //Do NOT F with this please. throwing exception here will break this whole library
         $pear = new \PEAR();
+
         return $pear->raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
