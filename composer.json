@@ -18,7 +18,8 @@
         "doctrine/common": "~2.3",
         "symfony/property-access": "~2.2",
         "fabpot/php-cs-fixer": "*",
-        "phpunit/phpunit": "3.7.*"
+        "phpunit/phpunit": "3.7.*",
+        "jtreminio/test-extensions": "~1.0"
     },
     "minimum-stability": "dev",
     "config": {
