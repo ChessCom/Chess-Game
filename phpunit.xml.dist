@@ -12,14 +12,19 @@
         bootstrap                   = "Tests/bootstrap.php">
 
     <testsuites>
-        <testsuite name="Fixtures Test Suite">
-            <directory>Tests/</directory>
+        <testsuite name="Chess Game Test Suite">
+            <directory>./Tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
             <directory>./</directory>
+            <exclude>
+                <directory>./bin</directory>
+                <directory>./Tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
