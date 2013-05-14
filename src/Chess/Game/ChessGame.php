@@ -1680,7 +1680,7 @@ class ChessGame
             }
             $ret[$square] = $piece;
         }
-        uksort($ret, array($this, '_sortToArray'));
+        uksort($ret, array($this, 'sortToArray'));
 
         return $ret;
     }
@@ -1689,9 +1689,10 @@ class ChessGame
      * Sort two algebraic coordinates for easy display by foreach() iteration
      * @param string
      * @param string
+     * @return integer
      * @access private
      */
-    public function _sortToArray($a, $b)
+    private function sortToArray($a, $b)
     {
         if ($a == $b) {
             return 0;
