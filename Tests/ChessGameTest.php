@@ -1,8 +1,6 @@
 <?php
 
-namespace Chess\Game\Tests;
-
-use Chess\Game\ChessGame;
+namespace Chess\Game;
 
 class ChessGameTest extends \PHPUnit_Framework_TestCase
 {
