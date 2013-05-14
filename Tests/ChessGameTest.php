@@ -2,7 +2,9 @@
 
 namespace Chess\Game;
 
-class ChessGameTest extends \PHPUnit_Framework_TestCase
+use jtreminio\TestExtensions\TestExtensions;
+
+class ChessGameTest extends TestExtensions
 {
     /** @var ChessGame */
     private $game;
@@ -278,7 +280,7 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->game->addPiece('W', 'Q', 'h1');
         $this->game->addPiece('B', 'P', 'c7');
 
-        $locations = $this->game->getPieceLocations('B');
+        $locations = $this->invokeMethod($this->game, 'getPieceLocations', array('B'));
         $this->assertEquals(1, count($locations));
         $this->assertTrue(in_array('c7', $locations));
     }
@@ -290,7 +292,7 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->game->addPiece('W', 'Q', 'h1');
         $this->game->addPiece('B', 'P', 'c7');
 
-        $locations = $this->game->getPieceLocations('W');
+        $locations = $this->invokeMethod($this->game, 'getPieceLocations', array('W'));
         $this->assertEquals(2, count($locations));
         $this->assertTrue(in_array('a1', $locations));
         $this->assertTrue(in_array('h1', $locations));
@@ -303,7 +305,8 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->game->addPiece('W', 'Q', 'h1');
         $this->game->addPiece('B', 'P', 'c7');
 
-        $this->assertInstanceOf('PEAR_Error', $this->game->getPieceLocations('COLOR_X'));
+        $error = $this->invokeMethod($this->game, 'getPieceLocations', array('COLOR_X'));
+        $this->assertInstanceOf('PEAR_Error', $error);
     }
 
     public function testGetPieceLocationsNoColorSpecified()
@@ -313,7 +316,7 @@ class ChessGameTest extends \PHPUnit_Framework_TestCase
         $this->game->addPiece('W', 'Q', 'h1');
         $this->game->addPiece('B', 'P', 'c7');
 
-        $locations = $this->game->getPieceLocations();
+        $locations = $this->invokeMethod($this->game, 'getPieceLocations');
         $this->assertEquals(2, count($locations));
         $this->assertTrue(in_array('a1', $locations));
         $this->assertTrue(in_array('h1', $locations));
