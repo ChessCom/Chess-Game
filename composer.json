@@ -4,7 +4,7 @@
     "keywords": ["chess", "php"],
     "homepage": "https://github.com/ChessCom/Chess-Game",
     "type": "library",
-    "license": "MIT",
+    "license": "PHP-3.01",
     "authors": [
         {
             "name": "Chess team",
@@ -12,10 +12,20 @@
         }
     ],
     "require": {
-        "php":                            ">=5.3.2"
+        "php": ">=5.3.2"
+    },
+    "require-dev": {
+        "fabpot/php-cs-fixer": "*",
+        "phpunit/phpunit": "3.7.*"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin"
     },
     "autoload": {
-        "psr-0": { "Chess\\Game": "" }
+        "psr-0": {
+            "Chess\\Game": "src/"
+        }
     },
     "target-dir": "Chess/Game"
 }
