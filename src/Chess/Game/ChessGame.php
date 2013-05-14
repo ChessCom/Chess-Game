@@ -1421,7 +1421,7 @@ class ChessGame
         return false;
     }
 
-    public function _renderFen()
+    private function renderFenBit()
     {
         $fen = '';
         $ws = 0;
@@ -1474,7 +1474,7 @@ class ChessGame
      */
     public function renderFen($include_moves = true, $include_en_passant = true)
     {
-        $fen = $this->_renderFen() . ' ';
+        $fen = $this->renderFenBit() . ' ';
 
         // render who's to move
         $fen .= strtolower($this->_move) . ' ';
