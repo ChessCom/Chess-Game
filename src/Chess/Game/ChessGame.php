@@ -989,11 +989,11 @@ class ChessGame
                             $this->_swapSquares($this->_KColumn . $row, $this->_KRookColumn . $row);
                           } elseif ("g$row" == $this->_KRookColumn . $row) {
                             //the king is moving to where the rook is, so lets move the rook first to avoid piece capture
-                            $this->_moveAlgebraic($this->_KRookColumn . $row, "f$row");
-                            $this->_moveAlgebraic($this->_KColumn . $row, "g$row");
+                            $this->moveAlgebraic($this->_KRookColumn . $row, "f$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "g$row");
                           } else {
-                            $this->_moveAlgebraic($this->_KColumn . $row, "g$row");
-                            $this->_moveAlgebraic($this->_KRookColumn . $row, "f$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "g$row");
+                            $this->moveAlgebraic($this->_KRookColumn . $row, "f$row");
                           }
                           $this->_moveFromSquare = $this->_KColumn . $row;
                           $this->_lastMove['square'] = "g$row";
@@ -1004,11 +1004,11 @@ class ChessGame
                             $this->_swapSquares($this->_KColumn . $row, $this->_QRookColumn . $row);
                           } elseif ("c$row" == $this->_QRookColumn . $row) {
                             //the king is moving to where the rook is, so lets move the rook first to avoid piece capture
-                            $this->_moveAlgebraic($this->_QRookColumn . $row, "d$row");
-                            $this->_moveAlgebraic($this->_KColumn . $row, "c$row");
+                            $this->moveAlgebraic($this->_QRookColumn . $row, "d$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "c$row");
                           } else {
-                            $this->_moveAlgebraic($this->_KColumn . $row, "c$row");
-                            $this->_moveAlgebraic($this->_QRookColumn . $row, "d$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "c$row");
+                            $this->moveAlgebraic($this->_QRookColumn . $row, "d$row");
                           }
                           $this->_moveFromSquare = $this->_KColumn . $row;
                           $this->_lastMove['square'] = "c$row";
@@ -1021,7 +1021,7 @@ class ChessGame
                     $this->_lastMove = $parsedMove;
                     $promote = isset($parsedMove['promote']) ?
                         $parsedMove['promote'] : '';
-                    $this->_moveAlgebraic($movedfrom, $parsedMove['square'], $promote);
+                    $this->moveAlgebraic($movedfrom, $parsedMove['square'], $promote);
                     if ($parsedMove['takes']) {
                         $this->_halfMoves = 0;
                     }
@@ -1770,7 +1770,7 @@ class ChessGame
      * @param string piece to promote to, if this is a promotion move
      * @access protected
      */
-    public function _moveAlgebraic($from, $to, $promote = '')
+    private function moveAlgebraic($from, $to, $promote = '')
     {
       if ($from == $to) {
         //sometimes in chess960 castling, the piece doesnt actually move. if we try to move it, it'll leave the board field blank
@@ -2289,7 +2289,7 @@ class ChessGame
                 // check every square the king could move to and make sure
                 // we wouldn't be in check
                 foreach ($kingsquares as $square) {
-                    $this->_moveAlgebraic($on, $square);
+                    $this->moveAlgebraic($on, $square);
                     if ($this->inCheck($this->_move)) {
                         $this->rollbackTransaction();
 
@@ -2313,7 +2313,7 @@ class ChessGame
                                 array('square' => $info['square']));
                         }
                     }
-                    $this->_moveAlgebraic($piecesq, $info['square']);
+                    $this->moveAlgebraic($piecesq, $info['square']);
                     $valid = !$this->inCheck($colorMoving);
                     // if ($wasinCheck && !$valid) {
                         // $this->rollbackTransaction();
