@@ -467,23 +467,6 @@ class ChessGame
       8 => 'h'
     );
 
-    function &factory($type = 'Standard')
-    {
-        if (!class_exists("Games_Chess_$type")) {
-            @include_once 'Games/Chess/' . ucfirst(strtolower($type)) . '.php';
-        }
-        if (class_exists("Games_Chess_$type")) {
-            $type = "Games_Chess_$type";
-            $a = new $type;
-
-            return $a;
-        } else {
-            $a = false;
-
-            return $a;
-        }
-    }
-
     /**
      * Create a blank chessboard with no pieces on it
      */
@@ -1006,11 +989,11 @@ class ChessGame
                             $this->_swapSquares($this->_KColumn . $row, $this->_KRookColumn . $row);
                           } elseif ("g$row" == $this->_KRookColumn . $row) {
                             //the king is moving to where the rook is, so lets move the rook first to avoid piece capture
-                            $this->_moveAlgebraic($this->_KRookColumn . $row, "f$row");
-                            $this->_moveAlgebraic($this->_KColumn . $row, "g$row");
+                            $this->moveAlgebraic($this->_KRookColumn . $row, "f$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "g$row");
                           } else {
-                            $this->_moveAlgebraic($this->_KColumn . $row, "g$row");
-                            $this->_moveAlgebraic($this->_KRookColumn . $row, "f$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "g$row");
+                            $this->moveAlgebraic($this->_KRookColumn . $row, "f$row");
                           }
                           $this->_moveFromSquare = $this->_KColumn . $row;
                           $this->_lastMove['square'] = "g$row";
@@ -1021,11 +1004,11 @@ class ChessGame
                             $this->_swapSquares($this->_KColumn . $row, $this->_QRookColumn . $row);
                           } elseif ("c$row" == $this->_QRookColumn . $row) {
                             //the king is moving to where the rook is, so lets move the rook first to avoid piece capture
-                            $this->_moveAlgebraic($this->_QRookColumn . $row, "d$row");
-                            $this->_moveAlgebraic($this->_KColumn . $row, "c$row");
+                            $this->moveAlgebraic($this->_QRookColumn . $row, "d$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "c$row");
                           } else {
-                            $this->_moveAlgebraic($this->_KColumn . $row, "c$row");
-                            $this->_moveAlgebraic($this->_QRookColumn . $row, "d$row");
+                            $this->moveAlgebraic($this->_KColumn . $row, "c$row");
+                            $this->moveAlgebraic($this->_QRookColumn . $row, "d$row");
                           }
                           $this->_moveFromSquare = $this->_KColumn . $row;
                           $this->_lastMove['square'] = "c$row";
@@ -1038,12 +1021,12 @@ class ChessGame
                     $this->_lastMove = $parsedMove;
                     $promote = isset($parsedMove['promote']) ?
                         $parsedMove['promote'] : '';
-                    $this->_moveAlgebraic($movedfrom, $parsedMove['square'], $promote);
+                    $this->moveAlgebraic($movedfrom, $parsedMove['square'], $promote);
                     if ($parsedMove['takes']) {
-                        $this->_halfMoves = 1;
+                        $this->_halfMoves = 0;
                     }
                     if ($parsedMove['piece'] == 'P') {
-                        $this->_halfMoves = 1;
+                        $this->_halfMoves = 0;
                         $this->_enPassantSquare = '-';
                         if (in_array($movedfrom{1} - $parsedMove['square']{1},
                               array(2, -2))) {
@@ -1151,8 +1134,9 @@ class ChessGame
     {
       if ($withChecks) {
         $objMoveList = $this->_movesWithCheck;
+      } else {
+        $objMoveList = $this->_moves;
       }
-      $objMoveList = $this->_moves;
       $strMoveList = "";
       $intCount=0;
       foreach ($objMoveList as $key => $objMove) {
@@ -1215,9 +1199,6 @@ class ChessGame
         foreach ($moves as $escape) {
             $this->startTransaction();
             $this->_move = $color;
-            if (!class_exists('PEAR')) {
-                require_once 'PEAR.php';
-            }
 
             try {
                 $this->moveSquare($king, $escape);
@@ -1270,18 +1251,8 @@ class ChessGame
                 foreach ($canmove as $move) {
                     $this->startTransaction();
                     $this->_move = $color;
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
 
-                    try {
-                        $err = $this->moveSquare($a, $move);
-                    } catch (\Exception $e) {
-                        //do nothing
-                    }
-
-                    $this->rollbackTransaction();
-                    if (!is_object($err)) {
+                    if (! $this->isError($this->moveSquare($a, $move))) {
                         return false;
                     }
                 }
@@ -1369,9 +1340,9 @@ class ChessGame
 
         if (count($blackpieces) > 2 || count($whitepieces) > 2) {
           return false;
-        } elseif (is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
+        } elseif (array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
           return false;
-        } elseif (is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
+        } elseif (array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
           return false;
         }
 
@@ -1379,6 +1350,7 @@ class ChessGame
             if (count($whitepieces) == 1) {
                 return true;
             }
+            // XXX: The following if/else block appears to be unreachable due to the if/elseif/elseif block above
             if ($whitepieces[0] == 'K') {
                 if (in_array($whitepieces[1], array('N', 'B'))) {
                   if (is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
@@ -1393,9 +1365,9 @@ class ChessGame
                 }
             } else {
                 if (in_array($whitepieces[0], array('N', 'B'))) {
-                  if (is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
+                  if (array_key_exists('N', $pieces['W']) && is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
                     return false;
-                  } elseif (is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
+                  } elseif (array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
                     return false;
                   } else {
                     return true;
@@ -1410,6 +1382,7 @@ class ChessGame
             if (count($blackpieces) == 1) {
                 return true;
             }
+            // XXX: The following if/else block appears to be unreachable due to the if/elseif/elseif block above
             if ($blackpieces[0] == 'K') {
                 if (in_array($blackpieces[1], array('N', 'B'))) {
                   if (is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
@@ -1424,9 +1397,9 @@ class ChessGame
                 }
             } else {
                 if (in_array($blackpieces[0], array('N', 'B'))) {
-                  if (is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
+                  if (array_key_exists('N', $pieces['B']) && is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
                     return false;
-                  } elseif (is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
+                  } elseif (array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
                     return false;
                   } else {
                     return true;
@@ -1448,7 +1421,7 @@ class ChessGame
         return false;
     }
 
-    public function _renderFen()
+    private function renderFenBit()
     {
         $fen = '';
         $ws = 0;
@@ -1501,7 +1474,7 @@ class ChessGame
      */
     public function renderFen($include_moves = true, $include_en_passant = true)
     {
-        $fen = $this->_renderFen() . ' ';
+        $fen = $this->renderFenBit() . ' ';
 
         // render who's to move
         $fen .= strtolower($this->_move) . ' ';
@@ -1590,7 +1563,7 @@ class ChessGame
     public function addPiece($color, $type, $square)
     {
         if (!isset($this->_board[$square])) {
-            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALIDSQUARE,
+            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_SQUARE,
                 array('square' => $square));
         }
         if ($this->_board[$square] != $square) {
@@ -1707,7 +1680,7 @@ class ChessGame
             }
             $ret[$square] = $piece;
         }
-        uksort($ret, array($this, '_sortToArray'));
+        uksort($ret, array($this, 'sortToArray'));
 
         return $ret;
     }
@@ -1716,9 +1689,10 @@ class ChessGame
      * Sort two algebraic coordinates for easy display by foreach() iteration
      * @param string
      * @param string
+     * @return integer
      * @access private
      */
-    public function _sortToArray($a, $b)
+    private function sortToArray($a, $b)
     {
         if ($a == $b) {
             return 0;
@@ -1796,7 +1770,7 @@ class ChessGame
      * @param string piece to promote to, if this is a promotion move
      * @access protected
      */
-    public function _moveAlgebraic($from, $to, $promote = '')
+    private function moveAlgebraic($from, $to, $promote = '')
     {
       if ($from == $to) {
         //sometimes in chess960 castling, the piece doesnt actually move. if we try to move it, it'll leave the board field blank
@@ -2036,10 +2010,6 @@ class ChessGame
                 case "B" :
                 case "N" :
                 case "P" :
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
-
                     try {
                         $err = $this->addPiece('W', $c, $loc);
                     } catch (\Exception $e) {
@@ -2069,10 +2039,6 @@ class ChessGame
                 case "b" :
                 case "n" :
                 case "p" :
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
-
                     try {
                         $err = $this->addPiece('B', strtoupper($c), $loc);
                     } catch (\Exception $e) {
@@ -2323,7 +2289,7 @@ class ChessGame
                 // check every square the king could move to and make sure
                 // we wouldn't be in check
                 foreach ($kingsquares as $square) {
-                    $this->_moveAlgebraic($on, $square);
+                    $this->moveAlgebraic($on, $square);
                     if ($this->inCheck($this->_move)) {
                         $this->rollbackTransaction();
 
@@ -2347,7 +2313,7 @@ class ChessGame
                                 array('square' => $info['square']));
                         }
                     }
-                    $this->_moveAlgebraic($piecesq, $info['square']);
+                    $this->moveAlgebraic($piecesq, $info['square']);
                     $valid = !$this->inCheck($colorMoving);
                     // if ($wasinCheck && !$valid) {
                         // $this->rollbackTransaction();
@@ -3264,9 +3230,9 @@ class ChessGame
     public function raiseError($code, $extra = array())
     {
         //Do NOT F with this please. throwing exception here will break this whole library
-        require_once 'PEAR.php';
+        $pear = new \PEAR();
 
-        return \PEAR::raiseError($this->getMessage($code, $extra), $code,
+        return $pear->raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
 
@@ -3569,9 +3535,6 @@ class ChessGame
                     // if so, then the piece is pinned and cannot move
                     $this->startTransaction();
                     $this->_move = $color;
-                    if (!class_exists('PEAR')) {
-                        require_once 'PEAR.php';
-                    }
 
                     try {
                         $ret = $this->moveSquare($value, $square);

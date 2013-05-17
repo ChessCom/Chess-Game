@@ -9,4 +9,4 @@ before_script:
   - curl -s http://getcomposer.org/installer | php -- --quiet
   - php composer.phar install --dev --prefer-source
 
-script: vendor/bin/phpunit
+script: bin/phpunit

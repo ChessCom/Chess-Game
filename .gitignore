@@ -1,2 +1,6 @@
 composer.lock
 vendor
+composer.phar
+phpunit.xml
+bin
+phpunit-report
