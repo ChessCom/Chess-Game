@@ -3153,7 +3153,9 @@ class ChessGame {
     function raiseError($code, $extra = array())
     {
         //Do NOT F with this please. throwing exception here will break this whole library
-        require_once 'PEAR.php';
+        if (!class_exists('PEAR')) {
+            require_once 'PEAR.php';
+        }
         return PEAR::raiseError($this->getMessage($code, $extra), $code,
             null, null, $extra);
     }
