@@ -30,6 +30,5 @@
             "Chess\\Game": "src/"
         },
         "files": ["PEAR.php"]
-    },
-    "target-dir": "Chess/Game"
+    }
 }
