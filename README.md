@@ -1,4 +1,4 @@
-##Chess-Game [![Build Status](https://travis-ci.org/cordoval/Chess-Game.png?branch=master)](https://travis-ci.org/cordoval/Chess-Game)
+##Chess-Game [![Build Status](https://travis-ci.org/ChessCom/Chess-Game.png?branch=develop)](https://travis-ci.org/ChessCom/Chess-Game)
 
 Based on Pear Games_Chess - represents a chess game as a php object
 
