@@ -122,9 +122,9 @@ class ChessGameTest extends TestExtensions
 
     public function testCastlingBlackFromTheKingSide()
     {
-        $startFen   = 'rnbqk2r/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR b KQkq a3 0 4';
-        $endFen     = 'rnbq1rk1/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR w KQ - 1 5';
-        $moves      = array('O-O');
+        $startFen = 'rnbqk2r/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR b KQkq a3 0 4';
+        $endFen = 'rnbq1rk1/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR w KQ - 1 5';
+        $moves = array('O-O');
 
         $this->game->resetGame($startFen);
 
@@ -138,9 +138,9 @@ class ChessGameTest extends TestExtensions
 
     public function testCastlingBlackFromTheQueenSide()
     {
-        $startFen   = 'r3kbnr/pp3ppp/n2pb3/q1p1p3/P3P1PP/1PPP4/5P2/RNBQKBNR b KQkq - 0 7';
-        $endFen     = '2kr1bnr/pp3ppp/n2pb3/q1p1p3/P3P1PP/1PPP4/5P2/RNBQKBNR w KQ - 1 8';
-        $moves      = array('O-O-O');
+        $startFen = 'r3kbnr/pp3ppp/n2pb3/q1p1p3/P3P1PP/1PPP4/5P2/RNBQKBNR b KQkq - 0 7';
+        $endFen = '2kr1bnr/pp3ppp/n2pb3/q1p1p3/P3P1PP/1PPP4/5P2/RNBQKBNR w KQ - 1 8';
+        $moves = array('O-O-O');
 
         $this->game->resetGame($startFen);
 
@@ -154,9 +154,9 @@ class ChessGameTest extends TestExtensions
 
     public function testCastlingWhiteFromTheKingSide()
     {
-        $startFen   = 'rnbqkbnr/4pppp/8/pppp4/5PP1/5N1B/PPPPP2P/RNBQK2R w KQkq a6 0 5';
-        $endFen     = 'rnbqkbnr/4pppp/8/pppp4/5PP1/5N1B/PPPPP2P/RNBQ1RK1 b kq - 1 5';
-        $moves      = array('O-O');
+        $startFen = 'rnbqkbnr/4pppp/8/pppp4/5PP1/5N1B/PPPPP2P/RNBQK2R w KQkq a6 0 5';
+        $endFen = 'rnbqkbnr/4pppp/8/pppp4/5PP1/5N1B/PPPPP2P/RNBQ1RK1 b kq - 1 5';
+        $moves = array('O-O');
 
         $this->game->resetGame($startFen);
 
@@ -170,9 +170,9 @@ class ChessGameTest extends TestExtensions
 
     public function testCastlingWhiteFromTheQueenSide()
     {
-        $startFen   = 'rnbqkbnr/3pppp1/p1p5/1p5p/3P1B2/2NQ4/PPP1PPPP/R3KBNR w KQkq - 0 5';
-        $endFen     = 'rnbqkbnr/3pppp1/p1p5/1p5p/3P1B2/2NQ4/PPP1PPPP/2KR1BNR b kq - 1 5';
-        $moves      = array('O-O-O');
+        $startFen = 'rnbqkbnr/3pppp1/p1p5/1p5p/3P1B2/2NQ4/PPP1PPPP/R3KBNR w KQkq - 0 5';
+        $endFen = 'rnbqkbnr/3pppp1/p1p5/1p5p/3P1B2/2NQ4/PPP1PPPP/2KR1BNR b kq - 1 5';
+        $moves = array('O-O-O');
 
         $this->game->resetGame($startFen);
 
@@ -195,42 +195,42 @@ class ChessGameTest extends TestExtensions
         $endFen = '1r2r1k1/5pp1/3q4/2n1p3/R1P1P1Pp/4BP2/6BP/R3Q1K1 b - - 0 36';
 
         $moves = array(
-            1   => array('white' => 'Nf3',  'black' => 'Nf6'),
-            2   => array('white' => 'c4',   'black' => 'e6'),
-            3   => array('white' => 'Nc3',  'black' => 'Bb4'),
-            4   => array('white' => 'Qc2',  'black' => 'O-O'),
-            5   => array('white' => 'a3',   'black' => 'Bxc3'),
-            6   => array('white' => 'Qxc3', 'black' => 'b6'),
-            7   => array('white' => 'b4',   'black' => 'd6'),
-            8   => array('white' => 'Bb2',  'black' => 'Bb7'),
-            9   => array('white' => 'g3',   'black' => 'c5'),
-            10  => array('white' => 'Bg2',  'black' => 'Nbd7'),
-            11  => array('white' => 'O-O',  'black' => 'Rc8'),
-            12  => array('white' => 'd3',   'black' => 'Re8'),
-            13  => array('white' => 'e4',   'black' => 'a6'),
-            14  => array('white' => 'Qb3',  'black' => 'b5'),
-            15  => array('white' => 'Nd2',  'black' => 'Rb8'),
-            16  => array('white' => 'Rfc1', 'black' => 'Ba8'),
-            17  => array('white' => 'Qd1',  'black' => 'Qe7'),
-            18  => array('white' => 'cxb5', 'black' => 'axb5'),
-            19  => array('white' => 'Nb3',  'black' => 'e5'),
-            20  => array('white' => 'f3',   'black' => 'h5'),
-            21  => array('white' => 'bxc5', 'black' => 'dxc5'),
-            22  => array('white' => 'a4',   'black' => 'h4'),
-            23  => array('white' => 'g4',   'black' => 'c4'),
-            24  => array('white' => 'dxc4', 'black' => 'bxa4'),
-            25  => array('white' => 'Ba3',  'black' => 'Qd8'),
-            26  => array('white' => 'Nc5',  'black' => 'Bc6'),
-            27  => array('white' => 'Nxa4', 'black' => 'Nh7'),
-            28  => array('white' => 'Nc5',  'black' => 'Ng5'),
-            29  => array('white' => 'Nxd7', 'black' => 'Bxd7'),
-            30  => array('white' => 'Rc3',  'black' => 'Qa5'),
-            31  => array('white' => 'Rd3',  'black' => 'Ba4'),
-            32  => array('white' => 'Qe1',  'black' => 'Qa6'),
-            33  => array('white' => 'Bc1',  'black' => 'Ne6'),
-            34  => array('white' => 'Rda3', 'black' => 'Nc5'),
-            35  => array('white' => 'Be3',  'black' => 'Qd6'),
-            36  => array('white' => 'Rxa4'),
+            1 => array('white' => 'Nf3', 'black' => 'Nf6'),
+            2 => array('white' => 'c4', 'black' => 'e6'),
+            3 => array('white' => 'Nc3', 'black' => 'Bb4'),
+            4 => array('white' => 'Qc2', 'black' => 'O-O'),
+            5 => array('white' => 'a3', 'black' => 'Bxc3'),
+            6 => array('white' => 'Qxc3', 'black' => 'b6'),
+            7 => array('white' => 'b4', 'black' => 'd6'),
+            8 => array('white' => 'Bb2', 'black' => 'Bb7'),
+            9 => array('white' => 'g3', 'black' => 'c5'),
+            10 => array('white' => 'Bg2', 'black' => 'Nbd7'),
+            11 => array('white' => 'O-O', 'black' => 'Rc8'),
+            12 => array('white' => 'd3', 'black' => 'Re8'),
+            13 => array('white' => 'e4', 'black' => 'a6'),
+            14 => array('white' => 'Qb3', 'black' => 'b5'),
+            15 => array('white' => 'Nd2', 'black' => 'Rb8'),
+            16 => array('white' => 'Rfc1', 'black' => 'Ba8'),
+            17 => array('white' => 'Qd1', 'black' => 'Qe7'),
+            18 => array('white' => 'cxb5', 'black' => 'axb5'),
+            19 => array('white' => 'Nb3', 'black' => 'e5'),
+            20 => array('white' => 'f3', 'black' => 'h5'),
+            21 => array('white' => 'bxc5', 'black' => 'dxc5'),
+            22 => array('white' => 'a4', 'black' => 'h4'),
+            23 => array('white' => 'g4', 'black' => 'c4'),
+            24 => array('white' => 'dxc4', 'black' => 'bxa4'),
+            25 => array('white' => 'Ba3', 'black' => 'Qd8'),
+            26 => array('white' => 'Nc5', 'black' => 'Bc6'),
+            27 => array('white' => 'Nxa4', 'black' => 'Nh7'),
+            28 => array('white' => 'Nc5', 'black' => 'Ng5'),
+            29 => array('white' => 'Nxd7', 'black' => 'Bxd7'),
+            30 => array('white' => 'Rc3', 'black' => 'Qa5'),
+            31 => array('white' => 'Rd3', 'black' => 'Ba4'),
+            32 => array('white' => 'Qe1', 'black' => 'Qa6'),
+            33 => array('white' => 'Bc1', 'black' => 'Ne6'),
+            34 => array('white' => 'Rda3', 'black' => 'Nc5'),
+            35 => array('white' => 'Be3', 'black' => 'Qd6'),
+            36 => array('white' => 'Rxa4'),
         );
 
         $this->game->resetGame();
@@ -508,6 +508,7 @@ class ChessGameTest extends TestExtensions
         $this->game->resetGame();
         $this->assertInstanceOf('PEAR_Error', $this->game->getPossibleRookMoves('h1', 'COLOR_X'));
     }
+
     public function testGetPossibleRookMovesInvalidSquareParameterError()
     {
         $this->game->resetGame();
@@ -632,11 +633,11 @@ class ChessGameTest extends TestExtensions
         $this->game->resetGame('8/pp3p1k/2p2q1p/3r1P1Q/5R2/7P/P1P2P2/7K w - - 1 30');
 
         $moves = array(
-            30  => array('white' => 'Qe2',  'black' => 'Qe5'),
-            31  => array('white' => 'Qh5',  'black' => 'Qf6'),
-            32  => array('white' => 'Qe2',  'black' => 'Re5'),
-            33  => array('white' => 'Qd3',  'black' => 'Rd5'),
-            34  => array('white' => 'Qe2',),
+            30 => array('white' => 'Qe2', 'black' => 'Qe5'),
+            31 => array('white' => 'Qh5', 'black' => 'Qf6'),
+            32 => array('white' => 'Qe2', 'black' => 'Re5'),
+            33 => array('white' => 'Qd3', 'black' => 'Rd5'),
+            34 => array('white' => 'Qe2',),
         );
 
         foreach ($moves as $playerMoves) {
@@ -797,8 +798,8 @@ class ChessGameTest extends TestExtensions
 
     public function testMoveListWithChecks()
     {
-        $moves      = array('Rf1', 'Kb6', 'Rf6', 'Kb5', 'Rf5', 'Kb6');
-        $startFen   = '8/8/k7/8/8/8/4K3/4R3 w - -';
+        $moves = array('Rf1', 'Kb6', 'Rf6', 'Kb5', 'Rf5', 'Kb6');
+        $startFen = '8/8/k7/8/8/8/4K3/4R3 w - -';
 
         $this->game->resetGame($startFen);
 
@@ -827,8 +828,8 @@ class ChessGameTest extends TestExtensions
 
     public function testMoveListStringWithChecks()
     {
-        $moves      = array('Rf1', 'Kb6', 'Rf6', 'Kb5', 'Rf5', 'Kb6');
-        $startFen   = '8/8/k7/8/8/8/4K3/4R3 w - -';
+        $moves = array('Rf1', 'Kb6', 'Rf6', 'Kb5', 'Rf5', 'Kb6');
+        $startFen = '8/8/k7/8/8/8/4K3/4R3 w - -';
 
         $this->game->resetGame($startFen);
 
@@ -930,8 +931,8 @@ class ChessGameTest extends TestExtensions
                 $index = $rank . $column;
 
                 if (array_key_exists($index, $piecesToSet)) {
-                    $color  = $piecesToSet[$index]['color'];
-                    $piece  = $piecesToSet[$index]['piece'];
+                    $color = $piecesToSet[$index]['color'];
+                    $piece = $piecesToSet[$index]['piece'];
                     $referenceArray[$index] = ('W' == $color) ? $piece : strtolower($piece);
                 } else {
                     $referenceArray[$index] = false;
