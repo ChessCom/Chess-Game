@@ -545,7 +545,7 @@ class ChessGame
         return true;
     }
 
-    private function getSquareFromParsedMove($parsedMove, $color = null)
+    protected function getSquareFromParsedMove($parsedMove, $color = null)
     {
         if (is_null($color)) {
             $color = $this->_move;
