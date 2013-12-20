@@ -2377,7 +2377,6 @@ class ChessGame
             } else {
                 return 'O-O-O';
             }
-          }
         } else {
           $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
           if (!in_array($to, $moves)) {
