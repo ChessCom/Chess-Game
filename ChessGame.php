@@ -2363,8 +2363,14 @@ class ChessGame
                 array('square' => $from));
         }
 
-        if ($piece['piece'] == 'K') {
-          if((($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) || (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) || !in_array($to, $this->_getKingSquares($from))) {
+        if (
+            $piece['piece'] == 'K' &&
+            (
+                (($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) ||
+                (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) ||
+                !in_array($to, $this->_getKingSquares($from))
+            )
+        ) {
             // this is a castling attempt
             if($this->objColumnToNumber[$from{0}] < $this->objColumnToNumber[$to{0}]) {
                 return 'O-O';
