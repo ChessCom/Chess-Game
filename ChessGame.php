@@ -2390,13 +2390,15 @@ class ChessGame
                     return 'O-O-O';
                 }
             }
-        } else {
+        }
+        // not an available castling move; continue checking as a normal move even for kings
+
           $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
           if (!in_array($to, $moves)) {
               return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
                   array('from' => $from, 'to' => $to));
           }  //KK end
-        }
+
         $others = array();
         if ($piece['piece'] != 'K' && $piece['piece'] != 'P') {
             $others = $this->_getAllPieceSquares($piece['piece'],
