@@ -2363,22 +2363,19 @@ class ChessGame
                 array('square' => $from));
         }
 
-        if ($piece['piece'] == 'K') {
-          if((($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) || (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) || !in_array($to, $this->_getKingSquares($from))) {
+        $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
+        if (!in_array($to, $moves)) {
+            return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
+                array('from' => $from, 'to' => $to));
+        } elseif ($piece['piece'] == 'K' && in_array($to, $this->_getCastleSquares($from, $piece['color']))) {
+            // _getCastleSquares only returns still-valid castle squares, so we know that
             // this is a castling attempt
             if($this->objColumnToNumber[$from{0}] < $this->objColumnToNumber[$to{0}]) {
                 return 'O-O';
             } else {
                 return 'O-O-O';
             }
-          }
-        } else {
-          $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
-          if (!in_array($to, $moves)) {
-              return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
-                  array('from' => $from, 'to' => $to));
-          }  //KK end
-        }
+        }  //KK end
         $others = array();
         if ($piece['piece'] != 'K' && $piece['piece'] != 'P') {
             $others = $this->_getAllPieceSquares($piece['piece'],
@@ -2721,10 +2718,13 @@ class ChessGame
      * @access protected
      * @since 0.7alpha
      */
-    function _getCastleSquares($square)
+    function _getCastleSquares($square, $color = null)
     {
+        if (!$color) {
+            $color = $this->_move;
+        }
         $ret = array();
-        if ($this->_move == 'W') {
+        if ($color == 'W') {
             if ($square == 'e1' && $this->_WCastleK) {
                 $ret[] = 'g1';
             }
@@ -3122,6 +3122,10 @@ class ChessGame
         $ret = $this->_getKingSquares($square);
         if ($returnCastleMoves) {
             $castleret = $this->_getCastleSquares($square);
+            // todo: [bpc] verify castling is allowed to each square due to
+            // check rules (cannot move the king out of, through, or into check)
+            // and that no pieces exist between the rook and king
+            // http://en.wikipedia.org/wiki/Castling#Requirements
         }
         $mypieces = $this->getPieceLocations($color);
         foreach ($ret as $square) {
