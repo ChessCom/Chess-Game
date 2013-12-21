@@ -732,10 +732,12 @@ class ChessGame
                   'color' => $color));
     }
 
-    function inCheck($color)
+    function inCheck($color, $king_loc = null)
     {
         $ret = array();
-        $king_loc = $this->_pieces[$color . 'K'];
+        if (!$king_loc) {
+            $king_loc = $this->_pieces[$color . 'K'];
+        }
         $opposite_color = $color == 'W' ? 'B' : 'W';
 
         foreach ($this->_pieces as $name => $loc) {
@@ -3122,10 +3124,36 @@ class ChessGame
         $ret = $this->_getKingSquares($square);
         if ($returnCastleMoves) {
             $castleret = $this->_getCastleSquares($square);
-            // todo: [bpc] verify castling is allowed to each square due to
+            // verify castling is allowed to each square due to
             // check rules (cannot move the king out of, through, or into check)
             // and that no pieces exist between the rook and king
             // http://en.wikipedia.org/wiki/Castling#Requirements
+            foreach ($castleret as $idx => $moveTo) {
+                list($colFrom,$row) = str_split($square);
+                list($colTo,$row) = str_split($moveTo);
+
+                // let's check for interfering pieces first, since that's less expensive
+                // find all the columns that are between the king and the rook
+                $betweenCols = array_slice(range($colFrom, $colTo > $colFrom ? 'g':'b'), 1);
+                foreach($traverseCols as $col) {
+                    if (in_array($col . $row, $this->_pieces)) {
+                        unset($castleret[$idx]);
+                        break;
+                    }
+                }
+
+                // only continue if we haven't discarded this castling option yet
+                if (isset($castleret[$idx])) {
+                    // find all the columns the king will start in, pass through, and end in
+                    $traverseCols = range($colFrom, $colTo);
+                    foreach($traverseCols as $col) {
+                        if ($this->inCheck($color, $col . $row)) {
+                            unset($castleret[$idx]);
+                            break;
+                        }
+                    }
+                }
+            }
         }
         $mypieces = $this->getPieceLocations($color);
         foreach ($ret as $moveTo) {
