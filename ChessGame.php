@@ -3130,12 +3130,15 @@ class ChessGame
             // http://en.wikipedia.org/wiki/Castling#Requirements
             foreach ($castleret as $idx => $moveTo) {
                 list($colFrom,$row) = str_split($square);
-                list($colTo,$row) = str_split($moveTo);
+                list($colTo,$rowTo) = str_split($moveTo);
+                if ($row != $rowTo) {
+                    break;
+                }
 
                 // let's check for interfering pieces first, since that's less expensive
                 // find all the columns that are between the king and the rook
                 $betweenCols = array_slice(range($colFrom, $colTo > $colFrom ? 'g':'b'), 1);
-                foreach($traverseCols as $col) {
+                foreach($betweenCols as $col) {
                     if (in_array($col . $row, $this->_pieces)) {
                         unset($castleret[$idx]);
                         break;
