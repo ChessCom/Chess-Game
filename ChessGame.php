@@ -3128,9 +3128,9 @@ class ChessGame
             // http://en.wikipedia.org/wiki/Castling#Requirements
         }
         $mypieces = $this->getPieceLocations($color);
-        foreach ($ret as $square) {
-            if (!in_array($square, $mypieces)) {
-                $newret[] = $square;
+        foreach ($ret as $moveTo) {
+            if (!in_array($moveTo, $mypieces)) {
+                $newret[] = $moveTo;
             }
         }
         return array_merge($newret, $castleret);
