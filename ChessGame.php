@@ -732,10 +732,12 @@ class ChessGame
                   'color' => $color));
     }
 
-    function inCheck($color)
+    function inCheck($color, $king_loc = null)
     {
         $ret = array();
-        $king_loc = $this->_pieces[$color . 'K'];
+        if (!$king_loc) {
+            $king_loc = $this->_pieces[$color . 'K'];
+        }
         $opposite_color = $color == 'W' ? 'B' : 'W';
 
         foreach ($this->_pieces as $name => $loc) {
@@ -2363,22 +2365,19 @@ class ChessGame
                 array('square' => $from));
         }
 
-        if ($piece['piece'] == 'K') {
-          if((($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) || (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) || !in_array($to, $this->_getKingSquares($from))) {
+        $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
+        if (!in_array($to, $moves)) {
+            return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
+                array('from' => $from, 'to' => $to));
+        } elseif ($piece['piece'] == 'K' && in_array($to, $this->_getCastleSquares($from, $piece['color']))) {
+            // _getCastleSquares only returns still-valid castle squares, so we know that
             // this is a castling attempt
             if($this->objColumnToNumber[$from{0}] < $this->objColumnToNumber[$to{0}]) {
                 return 'O-O';
             } else {
                 return 'O-O-O';
             }
-          }
-        } else {
-          $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
-          if (!in_array($to, $moves)) {
-              return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
-                  array('from' => $from, 'to' => $to));
-          }  //KK end
-        }
+        }  //KK end
         $others = array();
         if ($piece['piece'] != 'K' && $piece['piece'] != 'P') {
             $others = $this->_getAllPieceSquares($piece['piece'],
@@ -2721,10 +2720,13 @@ class ChessGame
      * @access protected
      * @since 0.7alpha
      */
-    function _getCastleSquares($square)
+    function _getCastleSquares($square, $color = null)
     {
+        if (!$color) {
+            $color = $this->_move;
+        }
         $ret = array();
-        if ($this->_move == 'W') {
+        if ($color == 'W') {
             if ($square == 'e1' && $this->_WCastleK) {
                 $ret[] = 'g1';
             }
@@ -3122,11 +3124,44 @@ class ChessGame
         $ret = $this->_getKingSquares($square);
         if ($returnCastleMoves) {
             $castleret = $this->_getCastleSquares($square);
+            // verify castling is allowed to each square due to
+            // check rules (cannot move the king out of, through, or into check)
+            // and that no pieces exist between the rook and king
+            // http://en.wikipedia.org/wiki/Castling#Requirements
+            foreach ($castleret as $idx => $moveTo) {
+                list($colFrom,$row) = str_split($square);
+                list($colTo,$rowTo) = str_split($moveTo);
+                if ($row != $rowTo) {
+                    break;
+                }
+
+                // let's check for interfering pieces first, since that's less expensive
+                // find all the columns that are between the king and the rook
+                $betweenCols = array_slice(range($colFrom, $colTo > $colFrom ? 'g':'b'), 1);
+                foreach($betweenCols as $col) {
+                    if (in_array($col . $row, $this->_pieces)) {
+                        unset($castleret[$idx]);
+                        break;
+                    }
+                }
+
+                // only continue if we haven't discarded this castling option yet
+                if (isset($castleret[$idx])) {
+                    // find all the columns the king will start in, pass through, and end in
+                    $traverseCols = range($colFrom, $colTo);
+                    foreach($traverseCols as $col) {
+                        if ($this->inCheck($color, $col . $row)) {
+                            unset($castleret[$idx]);
+                            break;
+                        }
+                    }
+                }
+            }
         }
         $mypieces = $this->getPieceLocations($color);
-        foreach ($ret as $square) {
-            if (!in_array($square, $mypieces)) {
-                $newret[] = $square;
+        foreach ($ret as $moveTo) {
+            if (!in_array($moveTo, $mypieces)) {
+                $newret[] = $moveTo;
             }
         }
         return array_merge($newret, $castleret);
