@@ -2363,22 +2363,42 @@ class ChessGame
                 array('square' => $from));
         }
 
-        if ($piece['piece'] == 'K') {
-          if((($to == ($this->_QRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleQ'}) || (($to == ($this->_KRookColumn . (($this->_move == 'B')?'8':'1'))) && $this->{'_' . $this->_move . 'CastleK'}) || !in_array($to, $this->_getKingSquares($from))) {
-            // this is a castling attempt
-            if($this->objColumnToNumber[$from{0}] < $this->objColumnToNumber[$to{0}]) {
-                return 'O-O';
-            } else {
-                return 'O-O-O';
+        $castleRow = ($this->_move == 'B')?'8':'1';
+        if ($piece['piece'] == 'K' && substr($to, 1, 1) == $castleRow) {
+            // the king can castle (if available) by trying to move to any non-adjacent
+            // square in that row OR the square with the target rook, WHICH MAY BE ADJACENT
+            // during a chess 960 game. We do not need to check if the target square is empty
+            // because once castling is declared very specific destinations are set and
+            // special validation rules are applied in _validMove.
+            // Worth pointing out: in chess 960, the queen may not actually be on a lower file
+            // than the king, but the notation remains the same. See _parseMove
+
+            $fromFile = substr($from, 0, 1);
+            if ($this->{'_' . $this->_move . 'CastleK'}) {
+                // list all files more than two away
+                $kingsideTargetFiles = array_slice(range($fromFile, 'h'), 2);
+                $kingsideTargetFiles[] = $this->_KRookColumn; // usually 'h'; chess960 may have it adjacent and excluded by the slice
+                if (in_array(substr($to, 0, 1), $kingsideTargetFiles)) {
+                    return 'O-O';
+                }
             }
-          }
-        } else {
+            if ($this->{'_' . $this->_move . 'CastleQ'}) {
+                // list all files more than two away
+                $queensideTargetFiles = array_slice(range($fromFile, 'a'), 2);
+                $queensideTargetFiles[] = $this->_QRookColumn; // usually 'a'; chess960 may have it adjacent and excluded by the slice
+                if (in_array(substr($to, 0, 1), $queensideTargetFiles)) {
+                    return 'O-O-O';
+                }
+            }
+        }
+        // not an available castling move; continue checking as a normal move even for kings
+
           $moves = $this->getPossibleMoves($piece['piece'], $from, $piece['color']);    //KK start: optimize: no need to get all possible moves
           if (!in_array($to, $moves)) {
               return $this->raiseError(self::GAMES_CHESS_ERROR_CANT_MOVE_THAT_WAY,
                   array('from' => $from, 'to' => $to));
           }  //KK end
-        }
+
         $others = array();
         if ($piece['piece'] != 'K' && $piece['piece'] != 'P') {
             $others = $this->_getAllPieceSquares($piece['piece'],
