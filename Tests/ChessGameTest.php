@@ -955,4 +955,12 @@ class ChessGameTest extends TestExtensions
         $this->game->moveSAN('e4');
         $this->assertEquals('B', $this->game->toMove());
     }
+
+    public function testMovesShouldNotBeChangedAfterCheckingIfGameInStalemate()
+    {
+        $this->game->resetGame();
+        $this->game->moveSAN('h3');
+        $this->assertFalse($this->game->inStaleMate());
+        $this->assertEquals(array(1 => array('h3')), $this->game->getMoveList());
+    }
 }
