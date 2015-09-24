@@ -1277,15 +1277,18 @@ class ChessGame
      */
     public function inStaleMate($color = null)
     {
+        $this->startTransaction();
         if (is_null($color)) {
             $color = $this->_move;
         }
         $color = strtoupper($color);
         if (!in_array($color, array('W', 'B'))) {
+            $this->rollbackTransaction();
             return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
                 array('color' => $color));
         }
         if ($this->inCheck($color)) {
+            $this->rollbackTransaction();
             return false;
         }
         $moves = $this->getPossibleChecks($color);
@@ -1293,15 +1296,16 @@ class ChessGame
             if (count($canMove)) {
                 $a = $this->getPiece($name);
                 foreach ($canMove as $move) {
-                    $this->startTransaction();
                     $this->_move = $color;
 
                     if (!$this->isError($this->moveSquare($a, $move))) {
+                        $this->rollbackTransaction();
                         return false;
                     }
                 }
             }
         }
+        $this->rollbackTransaction();
 
         return true;
     }
