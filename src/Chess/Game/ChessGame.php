@@ -1181,12 +1181,12 @@ class ChessGame
                 $strMoveList .= ' ';
             }
             $strMoveList .= $key . '.';
-            if ($objMove[0]) {
+            if (isset($objMove[0])) {
                 $strMoveList .= $objMove[0];
             } else {
                 $strMoveList .= '..';
             }
-            if ($objMove[1]) {
+            if (isset($objMove[1])) {
                 $strMoveList .= ' ' . $objMove[1];
             }
             $intCount++;
