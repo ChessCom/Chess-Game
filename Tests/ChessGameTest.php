@@ -783,7 +783,7 @@ class ChessGameTest extends TestExtensions
 
     public function testMoveListString()
     {
-        $moves = array('Nf3', 'Nf6', 'c4', 'e6', 'Nc3', 'Bb4');
+        $moves = array('Nf3', 'Nf6', 'c4', 'e6', 'Nc3');
 
         $this->game->resetGame();
 
@@ -793,7 +793,7 @@ class ChessGameTest extends TestExtensions
 
         $moveList = $this->game->getMoveListString();
         $this->assertTrue(is_string($moveList));
-        $this->assertEquals('1.Nf3 Nf6 2.c4 e6 3.Nc3 Bb4', $moveList);
+        $this->assertEquals('1.Nf3 Nf6 2.c4 e6 3.Nc3', $moveList);
     }
 
     public function testMoveListWithChecks()
