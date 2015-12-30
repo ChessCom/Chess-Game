@@ -244,6 +244,34 @@ class ChessGameTest extends TestExtensions
         $this->assertEquals($endFen, $this->game->renderFen());
     }
 
+    /**
+     * Test two knights that can both move to the same square, but one is pinned to the king.
+     *
+     * 1.e4 e5 2.Bc4 Nf6 3.d3 Nc6 4.Nc3 Bb4 5.Ne2
+     */
+    public function testAmbiguousKnightMoves()
+    {
+        $endFen = 'r1bqk2r/pppp1ppp/2n2n2/4p3/1b2P3/2NP4/PPP1NPPP/R1BQKB1R w KQkq - 3 5';
+
+        $moves = array(
+            1 => array('white' => 'e4', 'black' => 'e5'),
+            3 => array('white' => 'Nc3', 'black' => 'Nf6'),
+            4 => array('white' => 'd3', 'black' => 'Bb4'),
+            5 => array('white' => 'Ne2', 'black' => 'Nc6'),
+            6 => array('white' => 'Ng2'),
+        );
+
+        $this->game->resetGame();
+
+        foreach ($moves as $playerMoves) {
+            foreach ($playerMoves as $move) {
+                $this->game->moveSAN($move);
+            }
+        }
+
+        $this->assertEquals($endFen, $this->game->renderFen());
+    }
+
     public function testGameOverDueToCheckmate()
     {
         $startFen = '3k2R1/8/3K4/8/8/8/8/8 b - -';
