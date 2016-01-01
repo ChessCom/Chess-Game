@@ -12,6 +12,7 @@ Based on Pear Games_Chess - represents a chess game as a php object
 ####Running the test suite:
 
 ```
-Check travis for how to run it.
+composer install
+phpunit
 ```
 

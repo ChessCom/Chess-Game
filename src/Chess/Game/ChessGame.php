@@ -585,18 +585,33 @@ class ChessGame
                             }
                         }
                     }
-                    if (count($ambiguous) > 1) {
-                        $pieces = implode($ambiguous, ' ');
 
-                        return $this->raiseError(
-                            self::GAMES_CHESS_ERROR_TOO_AMBIGUOUS,
-                            array('san' => $parsedMove['piece'] .
-                                $parsedMove['disambiguate'] . $parsedMove['takes']
-                                . $parsedMove['square'],
-                                'squares' => $pieces,
-                                'piece' => $parsedMove['piece']));
-                    }
                     $square = $col = $row = null;
+                    if (count($ambiguous) > 1) {
+                        // we have more than one possible move from square, so lets check to see if they are all legal moves
+                        $legalMoves = array();
+                        foreach ($ambiguous as $fromSquare) {
+                            $this->startTransaction();
+                            if (!$this->isError($this->moveSquare($fromSquare, $parsedMove['square']))) {
+                                $legalMoves[] = $fromSquare;
+                            }
+                            $this->rollbackTransaction();
+                        }
+
+                        if (count($legalMoves) != 1) {
+                            $square = $col = $row = null;
+                            $pieces = implode($legalMoves, ' ');
+
+                            return $this->raiseError(
+                                self::GAMES_CHESS_ERROR_TOO_AMBIGUOUS,
+                                array('san' => $parsedMove['piece'] . $parsedMove['disambiguate'] . $parsedMove['takes'] .
+                                    $parsedMove['square'],
+                                    'squares' => $pieces,
+                                    'piece' => $parsedMove['piece']));
+                        } else {
+                            $square = $legalMoves[0];
+                        }
+                    }
                 }
                 $potentials = array();
                 foreach ($this->_pieces as $name => $value) {
@@ -608,7 +623,8 @@ class ChessGame
                     }
                     if (isset($square)) {
                         if ($name{1} == $parsedMove['piece'] &&
-                            $value[0] == $square
+                            ((is_array($value) && $value[0] == $square) ||
+                            (!is_array($value) && $value == $square))
                         ) {
                             return $square;
                         }
