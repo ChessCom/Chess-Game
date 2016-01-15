@@ -21,41 +21,6 @@ class ChessGameTest extends TestExtensions
         $this->assertEquals('8/p7/8/8/8/8/8/8 w KQkq - 1 1', $this->game->renderFen());
     }
 
-    public function testAddPieceInvalidPromotedPawnForBishopKnightRook()
-    {
-        foreach (array('B', 'N', 'R') as $piece) {
-            $this->game->blankBoard();
-            $this->game->addPiece('B', 'P', 'a7');
-            $this->game->addPiece('B', 'P', 'b7');
-            $this->game->addPiece('B', 'P', 'c7');
-            $this->game->addPiece('B', 'P', 'd7');
-            $this->game->addPiece('B', 'P', 'e7');
-            $this->game->addPiece('B', 'P', 'f7');
-            $this->game->addPiece('B', 'P', 'g7');
-            $this->game->addPiece('B', 'P', 'h7');
-
-            $this->game->addPiece('B', $piece, 'a8');
-            $this->game->addPiece('B', $piece, 'h8');
-            $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', $piece, 'a1'));
-        }
-    }
-
-    public function testAddPieceInvalidPromotedPawnForQueen()
-    {
-        $this->game->blankBoard();
-        $this->game->addPiece('B', 'P', 'a7');
-        $this->game->addPiece('B', 'P', 'b7');
-        $this->game->addPiece('B', 'P', 'c7');
-        $this->game->addPiece('B', 'P', 'd7');
-        $this->game->addPiece('B', 'P', 'e7');
-        $this->game->addPiece('B', 'P', 'f7');
-        $this->game->addPiece('B', 'P', 'g7');
-        $this->game->addPiece('B', 'P', 'h7');
-
-        $this->game->addPiece('B', 'Q', 'd8');
-        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'Q', 'a1'));
-    }
-
     public function testAddPiecePromotedPawnForBishopKnightRook()
     {
         foreach (array('B', 'N', 'R') as $piece) {
@@ -78,20 +43,6 @@ class ChessGameTest extends TestExtensions
         $this->game->blankBoard();
         $this->game->addPiece('B', 'K', 'e8');
         $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'K', 'a6'));
-    }
-
-    public function testAddPieceInvalidAddingPawnWhenAllAlreadyExist()
-    {
-        $this->game->blankBoard();
-        $this->game->addPiece('B', 'P', 'a7');
-        $this->game->addPiece('B', 'P', 'b7');
-        $this->game->addPiece('B', 'P', 'c7');
-        $this->game->addPiece('B', 'P', 'd7');
-        $this->game->addPiece('B', 'P', 'e7');
-        $this->game->addPiece('B', 'P', 'f7');
-        $this->game->addPiece('B', 'P', 'g7');
-        $this->game->addPiece('B', 'P', 'h7');
-        $this->assertInstanceOf('PEAR_Error', $this->game->addPiece('B', 'P', 'a6'));
     }
 
     public function testAddPieceInvalidSquareParameterError()
@@ -990,5 +941,11 @@ class ChessGameTest extends TestExtensions
         $this->game->moveSAN('h3');
         $this->assertFalse($this->game->inStaleMate());
         $this->assertEquals(array(1 => array('h3')), $this->game->getMoveList());
+    }
+
+    public function testInitialSetupWithDuplicatedPiecesShouldBeValid()
+    {
+        $this->game->resetGame('nnnnknnn/pppppppp/8/8/8/8/PPPPPPPP/R1BQKB1R w KQ -');
+        $this->assertTrue($this->game->moveSAN('b3'));
     }
 }
