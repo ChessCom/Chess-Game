@@ -1625,6 +1625,28 @@ class ChessGame
     }
 
     /**
+     * Finds the next available key for a given piece name
+     *
+     * Example: If piece_name is "BN" it will find the next available BN name. If there are 6
+     * black knights already, it should return "BN7"
+     *
+     * @param string $color  Color of piece (W/B)
+     * @param string $type        Piece type (P|N|K|Q|R|B)
+     *
+     * @return string $pieceName
+     */
+    private function getNextPieceName($color, $type)
+    {
+        $pieceNumber = 1;
+        $pieceString = $color . $type;
+        while (isset($this->_pieces[$pieceString . $pieceNumber]) && $this->_pieces[$pieceString . $pieceNumber]) {
+            $pieceNumber++;
+        }
+
+        return $pieceString . $pieceNumber;
+    }
+
+    /**
      * Add a piece to the chessboard
      *
      * Must be overridden in child classes
@@ -1656,71 +1678,24 @@ class ChessGame
             case 'B' :
             case 'N' :
             case 'R' :
-                $piece_name = $color . $type;
-                if (!$this->_pieces[$piece_name . '1']) {
-                    $this->_board[$square] = $piece_name . '1';
-                    $this->_pieces[$piece_name . '1'] = $square;
-                } elseif (!$this->_pieces[$piece_name . '2']) {
-                    $this->_board[$square] = $piece_name . '2';
-                    $this->_pieces[$piece_name . '2'] = $square;
-                } else {
-                    // handle promoted pawns
-                    for ($col = 1; $col <= 8; $col++) {
-                        if (!$this->_pieces[$color . 'P' . $col]) {
-                            $this->_pieces[$color . 'P' . $col] =
-                                array($square, $type);
-                            $this->_board[$square] = $color . 'P' . $col;
-                            break 2;
-                        }
-                    }
-
-                    return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
-                        array('color' => $color, 'piece' => $type));
-
-                }
-                break;
             case 'Q' :
-                $piece_name = $color . 'Q';
-                if (!$this->_pieces[$piece_name]) {
-                    $this->_board[$square] = $piece_name;
-                    $this->_pieces[$piece_name] = $square;
-                } else {
-                    // handle promoted pawns
-                    for ($col = 1; $col <= 8; $col++) {
-                        if (!$this->_pieces[$color . 'P' . $col]) {
-                            $this->_pieces[$color . 'P' . $col] =
-                                array($square, 'Q');
-                            $this->_board[$square] = $color . 'P' . $col;
-                            break 2;
-                        }
-                    }
-
-                    return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
-                        array('color' => $color, 'piece' => $type));
-                }
+                $piece_name = $this->getNextPieceName($color, $type);
+                $this->_board[$square] = $piece_name;
+                $this->_pieces[$piece_name] = $square;
                 break;
             case 'P' :
-                // handle regular pawns
-                for ($col = 1; $col <= 8; $col++) {
-                    if (!$this->_pieces[$color . 'P' . $col]) {
-                        $this->_pieces[$color . 'P' . $col] =
-                            array($square, 'P');
-                        $this->_board[$square] = $color . 'P' . $col;
-                        break 2;
-                    }
-                }
-
-                return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
-                    array('color' => $color, 'piece' => $type));
+                $piece_name = $this->getNextPieceName($color, $type);
+                $this->_board[$square] = $piece_name;
+                $this->_pieces[$piece_name] = array($square, 'P');
                 break;
             case 'K' :
-                if (!$this->_pieces[$color . 'K']) {
-                    $this->_pieces[$color . 'K'] = $square;
-                    $this->_board[$square] = $color . 'K';
-                } else {
+                if ($this->_pieces[$color . 'K']) {
                     return $this->raiseError(self::GAMES_CHESS_ERROR_MULTIPIECE,
                         array('color' => $color, 'piece' => $type));
                 }
+
+                $this->_pieces[$color . 'K'] = $square;
+                $this->_board[$square] = $color . 'K';
                 break;
         }
 
