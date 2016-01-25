@@ -231,12 +231,13 @@ class ChessGameTest extends TestExtensions
         $this->assertEquals('W', $this->game->gameOver());
     }
 
-    public function testGameOverDueToDraw()
+    public function testGameOverDueTo50MoveDraw()
     {
         $startFen = '7k/4N3/4NK2/5B2/8/8/8/r7 w - - 100 112';
 
         $this->game->resetGame($startFen);
-        $this->assertEquals('D', $this->game->gameOver());
+        $this->assertFalse($this->game->gameOver());
+        $this->assert50MoveDraw();
     }
 
     public function testGetDiagonalColor()
@@ -537,7 +538,7 @@ class ChessGameTest extends TestExtensions
         $startFen = '7B/8/8/8/8/6k1/1b6/5K2 w - -';
 
         $this->game->resetGame($startFen);
-        $this->assertTrue($this->game->inBasicDraw());
+        $this->assertBasicDraw();
     }
 
     public function testIsInBasicDrawKingVersusKing()
@@ -545,7 +546,7 @@ class ChessGameTest extends TestExtensions
         $startFen = '8/5k2/8/8/6K1/8/8/8 w - -';
 
         $this->game->resetGame($startFen);
-        $this->assertTrue($this->game->inBasicDraw());
+        $this->assertBasicDraw();
     }
 
     public function testIsInBasicDrawKingVersusKingWithBishopOrKnight()
@@ -554,7 +555,7 @@ class ChessGameTest extends TestExtensions
             $startFen = sprintf('8/2%s2k2/8/8/6K1/8/8/8 w - -', $piece);
 
             $this->game->resetGame($startFen);
-            $this->assertTrue($this->game->inBasicDraw());
+            $this->assertBasicDraw();
         }
     }
 
@@ -577,8 +578,7 @@ class ChessGameTest extends TestExtensions
         $startFen = '7k/4N3/4NK2/5B2/8/8/8/r7 w - - 100 112';
 
         $this->game->resetGame($startFen);
-        $this->assertTrue($this->game->in50MoveDraw());
-        $this->assertTrue($this->game->inDraw());
+        $this->assert50MoveDraw();
     }
 
     /**
@@ -591,14 +591,7 @@ class ChessGameTest extends TestExtensions
         $startFen = '7k/5Q2/6K1/8/8/8/8/8 b - -';
 
         $this->game->resetGame($startFen);
-        $this->assertTrue($this->game->inStaleMate());
-        $this->assertTrue($this->game->inDraw());
-    }
-
-    public function testIsInStalemateInvalidColorParameterError()
-    {
-        $this->game->resetGame();
-        $this->assertInstanceOf('PEAR_Error', $this->game->inStaleMate('COLOR_X'));
+        $this->assertStalemate();
     }
 
     /**
@@ -625,10 +618,7 @@ class ChessGameTest extends TestExtensions
             }
         }
 
-        $this->assertTrue($this->game->inRepetitionDraw());
-
-        // TODO: Figure out why inRepetitionDraw() called from inDraw() doesn't work, but direct call does
-        //$this->assertTrue($this->game->inDraw());
+        $this->assertRepetitionDraw();
     }
 
     public function testIsNotInBasicDrawKingBishopVersusKingBishopBecauseBishopsOnDifferentColors()
@@ -947,5 +937,52 @@ class ChessGameTest extends TestExtensions
     {
         $this->game->resetGame('nnnnknnn/pppppppp/8/8/8/8/PPPPPPPP/R1BQKB1R w KQ -');
         $this->assertTrue($this->game->moveSAN('b3'));
+    }
+
+    public function testGameShouldNotBeOverInClaimableDraw()
+    {
+        $moves = array('e4', 'e5', 'Nf3', 'Nc6', 'Ng1', 'Nb8', 'Nf3', 'Nc6', 'Ng1', 'Nb8', 'Nf3');
+        $this->game->resetGame();
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $this->assertRepetitionDraw();
+    }
+
+    private function assertBasicDraw()
+    {
+        $this->assertTrue($this->game->inBasicDraw());
+        $this->assertTrue($this->game->inForcedDraw());
+        $this->assertTrue($this->game->inDraw());
+        $this->assertFalse($this->game->inClaimableDraw());
+        $this->assertNotFalse($this->game->gameOver());
+    }
+
+    private function assertStalemate()
+    {
+        $this->assertTrue($this->game->inStaleMate());
+        $this->assertTrue($this->game->inForcedDraw());
+        $this->assertTrue($this->game->inDraw());
+        $this->assertFalse($this->game->inClaimableDraw());
+        $this->assertNotFalse($this->game->gameOver());
+    }
+
+    private function assert50MoveDraw()
+    {
+        $this->assertTrue($this->game->in50MoveDraw());
+        $this->assertTrue($this->game->inDraw());
+        $this->assertTrue($this->game->inClaimableDraw());
+        $this->assertFalse($this->game->inForcedDraw());
+        $this->assertFalse($this->game->gameOver());
+    }
+
+    private function assertRepetitionDraw()
+    {
+        $this->assertTrue($this->game->inRepetitionDraw());
+        $this->assertTrue($this->game->inDraw());
+        $this->assertTrue($this->game->inClaimableDraw());
+        $this->assertFalse($this->game->inForcedDraw());
+        $this->assertFalse($this->game->gameOver());
     }
 }
