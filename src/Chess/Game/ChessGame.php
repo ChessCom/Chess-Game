@@ -1216,11 +1216,10 @@ class ChessGame
      */
     public function gameOver()
     {
-        $opposite = $this->_move == 'W' ? 'B' : 'W';
         if ($this->inCheckmate()) {
-            return $opposite;
+            return ('W' === $this->_move) ? 'B' : 'W';
         }
-        if ($this->inDraw()) {
+        if ($this->inForcedDraw()) {
             return 'D';
         }
 
@@ -1285,24 +1284,14 @@ class ChessGame
     /**
      * Determine whether a side is in stalemate
      *
-     * @param string $color color of the side to look at, defaults to the current side (W|B)
-     *
      * @throws self::GAMES_CHESS_ERROR_INVALID_COLOR
      *
      * @return boolean
      */
-    public function inStaleMate($color = null)
+    public function inStaleMate()
     {
         $this->startTransaction();
-        if (is_null($color)) {
-            $color = $this->_move;
-        }
-        $color = strtoupper($color);
-        if (!in_array($color, array('W', 'B'))) {
-            $this->rollbackTransaction();
-            return $this->raiseError(self::GAMES_CHESS_ERROR_INVALID_COLOR,
-                array('color' => $color));
-        }
+        $color = strtoupper($this->_move);
         if ($this->inCheck($color)) {
             $this->rollbackTransaction();
             return false;
@@ -1327,18 +1316,29 @@ class ChessGame
     }
 
     /**
-     * Determines the presence of a forced draw
-     *
-     * @param string $color (W|B)
+     * Determines the presence of a draw
      *
      * @return boolean
      */
-    public function inDraw($color = null)
+    public function inDraw()
     {
-        return $this->inStaleMate($color) ||
-        $this->inRepetitionDraw() ||
-        $this->in50MoveDraw() ||
-        $this->inBasicDraw();
+        return $this->inForcedDraw() || $this->inClaimableDraw();
+    }
+
+    /**
+     * @return bool
+     */
+    public function inForcedDraw()
+    {
+        return $this->inStaleMate() || $this->inBasicDraw();
+    }
+
+    /**
+     * @return bool
+     */
+    public function inClaimableDraw()
+    {
+        return $this->inRepetitionDraw() || $this->in50MoveDraw();
     }
 
     /**
