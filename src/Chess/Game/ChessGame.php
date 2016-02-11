@@ -538,12 +538,11 @@ class ChessGame
         $this->_Chess960 = $chess960;
 
         $this->_saveState = array();
+        $this->fens = array();
+
         if (!$fen) {
-            $this->fens = array('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -');
             $this->_setupStartingPosition();
         } else {
-            $this->fens = array($fen);
-
             return $this->_parseFen($fen);
         }
 
@@ -1366,15 +1365,12 @@ class ChessGame
      */
     public function inRepetitionDraw()
     {
-        $fens = $this->fens;
-        $fens[] = $this->renderFen(false);
-
-        if (3 > count($fens)) {
+        if (3 > $this->_halfMoves) {
             return false;
         }
 
         $samePositions = array_filter(
-            array_values(array_count_values($fens)),
+            array_values(array_count_values($this->fens)),
             function ($value) {
                 return 3 <= $value;
             }
@@ -1393,7 +1389,7 @@ class ChessGame
      */
     public function inFiveFoldRepetitionDraw()
     {
-        if (20 > count($this->fens)) {
+        if (20 > $this->_halfMoves) {
             return false;
         }
 
