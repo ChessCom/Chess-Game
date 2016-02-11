@@ -689,7 +689,7 @@ class ChessGameTest extends TestExtensions
         $this->assertFalse($this->game->inStaleMate());
     }
 
-    public function testIsInNotThreefoldRepetitionDraw()
+    public function testIsNotInThreefoldRepetitionDraw()
     {
         $this->game->resetGame();
         $this->assertFalse($this->game->inRepetitionDraw());
@@ -950,6 +950,40 @@ class ChessGameTest extends TestExtensions
         $this->assertRepetitionDraw();
     }
 
+    public function testGameShouldEndInFiveFoldRepetition()
+    {
+        $moves = array(
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6'
+        );
+        $this->game->resetGame();
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+
+        $this->assertFiveFoldRepetitionDraw();
+    }
+
     private function assertBasicDraw()
     {
         $this->assertTrue($this->game->inBasicDraw());
@@ -984,5 +1018,14 @@ class ChessGameTest extends TestExtensions
         $this->assertTrue($this->game->inClaimableDraw());
         $this->assertFalse($this->game->inForcedDraw());
         $this->assertFalse($this->game->gameOver());
+    }
+
+    private function assertFiveFoldRepetitionDraw()
+    {
+        $this->assertTrue($this->game->inRepetitionDraw());
+        $this->assertTrue($this->game->inDraw());
+        $this->assertFalse($this->game->inClaimableDraw());
+        $this->assertTrue($this->game->inForcedDraw());
+        $this->assertNotFalse($this->game->gameOver());
     }
 }
