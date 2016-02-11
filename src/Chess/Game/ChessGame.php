@@ -31,6 +31,7 @@ namespace Chess\Game;
  * - {@link inStaleMate()}: Use to determine presence of stalemate draw
  * - {@link in50MoveDraw()}: Use to determine presence of 50-move rule draw
  * - {@link inRepetitionDraw()}: Use to determine presence of a draw by repetition
+ * - {@link inFiveFoldRepetitionDraw()}: Use to determine presence of a draw by 5-fold repetition
  * - {@link inStaleMate()}: Use to determine presence of stalemate draw
  * - {@link inDraw()}: Use to determine if any forced draw condition exists
  *
@@ -414,14 +415,15 @@ class ChessGame
      * @access private
      */
     public $_movesWithCheck = array();
+
     /**
      * Store every position from the game, used to determine draw by repetition
      *
      * If the exact same position is encountered three times, then it is a draw
      * @var array
-     * @access private
      */
-    public $_allFENs = array();
+    private $fens = array();
+
     /**#@+
      * Castling rights
      * @var boolean
@@ -536,6 +538,8 @@ class ChessGame
         $this->_Chess960 = $chess960;
 
         $this->_saveState = array();
+        $this->fens = array();
+
         if (!$fen) {
             $this->_setupStartingPosition();
         } else {
@@ -1117,13 +1121,7 @@ class ChessGame
                 }
                 $this->_movesWithCheck[$oldMoveNumber][($this->_move == 'W') ? 0 : 1] = $moveWithCheck;
                 $this->_move = ($this->_move == 'W' ? 'B' : 'W');
-
-                // increment the position counter for this position
-                $x = $this->renderFen(false);
-                if (!isset($this->_allFENs[$x])) {
-                    $this->_allFENs[$x] = 0;
-                }
-                $this->_allFENs[$x]++;
+                $this->fens[] = $this->renderFen(false);
 
                 return true;
             } else {
@@ -1322,7 +1320,7 @@ class ChessGame
      */
     public function inDraw()
     {
-        return $this->inForcedDraw() || $this->inClaimableDraw();
+        return $this->inClaimableDraw() || $this->inForcedDraw();
     }
 
     /**
@@ -1330,7 +1328,7 @@ class ChessGame
      */
     public function inForcedDraw()
     {
-        return $this->inStaleMate() || $this->inBasicDraw();
+        return $this->inStaleMate() || $this->inBasicDraw() || $this->inFiveFoldRepetitionDraw();
     }
 
     /**
@@ -1338,7 +1336,7 @@ class ChessGame
      */
     public function inClaimableDraw()
     {
-        return $this->inRepetitionDraw() || $this->in50MoveDraw();
+        return !$this->inForcedDraw() && ($this->inRepetitionDraw() || $this->in50MoveDraw());
     }
 
     /**
@@ -1367,12 +1365,58 @@ class ChessGame
      */
     public function inRepetitionDraw()
     {
-        $fen = $this->renderFen(false);
-        if (isset($this->_allFENs[$fen]) && $this->_allFENs[$fen] >= 3) {
-            return true;
+        if (3 > $this->_halfMoves) {
+            return false;
         }
 
-        return false;
+        $samePositions = array_filter(
+            array_values(array_count_values($this->fens)),
+            function ($value) {
+                return 3 <= $value;
+            }
+        );
+
+        return (bool) $samePositions;
+    }
+
+
+    /**
+     * The game is drawn without either player making a claim if the same
+     * position occurs on the board after five consecutive pairs of moves
+     * for each player ("five-fold repetition")
+     *
+     * @return bool
+     */
+    public function inFiveFoldRepetitionDraw()
+    {
+        if (20 > $this->_halfMoves) {
+            return false;
+        }
+
+        $last5Moves = array_slice($this->fens, -20, 20);
+
+        $samePositions = array_filter(
+            array_values(array_count_values($last5Moves)),
+            function ($value) {
+                return 5 <= $value;
+            }
+        );
+
+        if (!$samePositions) {
+            return false;
+        }
+
+        $odd = array();
+        $even = array();
+        foreach ($last5Moves as $key => $fen) {
+            if (0 === $key % 2) {
+                $even[] = $fen;
+            }
+            else {
+                $odd[] = $fen;
+            }
+        }
+        return 2 === count(array_unique($even)) && 2 === count(array_unique($odd));
     }
 
     /**
