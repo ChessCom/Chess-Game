@@ -985,4 +985,51 @@ class ChessGameTest extends TestExtensions
         $this->assertFalse($this->game->inForcedDraw());
         $this->assertFalse($this->game->gameOver());
     }
+
+    public function testKingValidMovesWithMoveSAN()
+    {
+        $this->game->resetGame();
+        $this->game->moveSAN('e4');
+        $this->game->moveSAN('e5');
+        $this->game->moveSAN('d4');
+        $this->game->moveSAN('exd4');
+        $this->game->moveSAN('Qxd4');
+        $this->game->moveSAN('Nc6');
+        $this->game->moveSAN('Qd1');
+        $this->game->moveSAN('Bd6');
+        $this->game->moveSAN('a3');
+        $this->game->moveSAN('Nf6');
+        $this->game->moveSAN('Nc3');
+        $this->game->moveSAN('Nxe4');
+        $this->game->moveSAN('Qe7');
+        $this->game->moveSAN('Qe2');
+        $this->assertTrue($this->game->isError($this->game->moveSAN('Kxe7')));
+    }
+
+    public function testKingValidMovesMakingMoves()
+    {
+        $this->game->resetGame();
+        $this->game->moveSquare('e2', 'e4');
+        $this->game->moveSquare('e7', 'e5');
+        $this->game->moveSquare('d2', 'd4');
+        $this->game->moveSquare('e5', 'd4');
+        $this->game->moveSquare('d1', 'd4');
+        $this->game->moveSquare('b8', 'c6');
+        $this->game->moveSquare('d4', 'd1');
+        $this->game->moveSquare('f8', 'd6');
+        $this->game->moveSquare('a2', 'a3');
+        $this->game->moveSquare('g8', 'f6');
+        $this->game->moveSquare('b1', 'c3');
+        $this->game->moveSquare('f6', 'e4');
+        $this->game->moveSquare('c3', 'e4');
+        $this->game->moveSquare('d8', 'e7');
+        $this->game->moveSquare('d1', 'e2');
+        $this->assertTrue($this->game->isError($this->game->moveSquare('e8', 'e7')));
+    }
+
+    public function testKingShouldNotTakeOwnPiece()
+    {
+        $this->game->resetGame('5b1r/1b2k1p1/2N1pn1p/BBP5/3P4/1PN1P3/1P3PPP/4K2R b K - 0 22');
+        $this->assertTrue($this->game->isError($this->game->moveSquare('e7', 'e6')));
+    }
 }
