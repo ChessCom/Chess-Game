@@ -1490,6 +1490,57 @@ class ChessGame
         return false;
     }
 
+    /**
+     * @return bool
+     */
+    public function hasWhiteMatingMaterial()
+    {
+        return $this->hasMatingMaterial('W');
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBlackMatingMaterial()
+    {
+        return $this->hasMatingMaterial('B');
+    }
+
+    /**
+     * @param string $color
+     *
+     * @return bool
+     */
+    private function hasMatingMaterial($color)
+    {
+        $pieces = $this->getPieceTypes();
+        $queens = isset($pieces[$color]['Q']) && is_array($pieces[$color]['Q']) ? count($pieces[$color]['Q']) : 0;
+        if ($queens > 0) {
+            return true;
+        }
+        $rooks = isset($pieces[$color]['R']) && is_array($pieces[$color]['R']) ? count($pieces[$color]['R']) : 0;
+        if ($rooks > 0) {
+            return true;
+        }
+        $pawns = isset($pieces[$color]['P']) && is_array($pieces[$color]['P']) ? count($pieces[$color]['P']) : 0;
+        if ($pawns > 0) {
+            return true;
+        }
+        $bishops = isset($pieces[$color]['B']) && is_array($pieces[$color]['B']) ? count($pieces[$color]['B']) : 0;
+        if ($bishops > 1) {
+            return true;
+        }
+        $knights = isset($pieces[$color]['N']) && is_array($pieces[$color]['N']) ? count($pieces[$color]['N']) : 0;
+        if ($knights > 2) {
+            return true;
+        }
+        if ($bishops === 1 && $knights > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function renderFenBit()
     {
         $fen = '';
@@ -3737,7 +3788,6 @@ class ChessGame
      *   'B' => array('Q' => array('B'), // all queens
      *                'K' => array('W'),... // king is on white square
      * </pre>
-     * @access protected
      */
     private function getPieceTypes()
     {

@@ -1032,4 +1032,18 @@ class ChessGameTest extends TestExtensions
         $this->game->resetGame('5b1r/1b2k1p1/2N1pn1p/BBP5/3P4/1PN1P3/1P3PPP/4K2R b K - 0 22');
         $this->assertTrue($this->game->isError($this->game->moveSquare('e7', 'e6')));
     }
+
+    public function testHasMatingMaterialShouldReturnTrueOnStandardSetup()
+    {
+        $this->game->resetGame();
+        $this->assertTrue($this->game->hasBlackMatingMaterial());
+        $this->assertTrue($this->game->hasWhiteMatingMaterial());
+    }
+
+    public function testHasMatingMaterialShouldReturnTrueForBlackAndFalseForWhite()
+    {
+        $this->game->resetGame('8/8/8/8/5b2/8/4kpK1/8 b - - 1 86');
+        $this->assertFalse($this->game->hasWhiteMatingMaterial());
+        $this->assertTrue($this->game->hasBlackMatingMaterial());
+    }
 }
