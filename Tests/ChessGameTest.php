@@ -2,9 +2,9 @@
 
 namespace Chess\Game;
 
-use jtreminio\TestExtensions\TestExtensions;
+use PHPUnit\Framework\TestCase;
 
-class ChessGameTest extends TestExtensions
+class ChessGameTest extends TestCase
 {
     /** @var ChessGame */
     private $game;
@@ -1045,5 +1045,22 @@ class ChessGameTest extends TestExtensions
         $this->game->resetGame('8/8/8/8/5b2/8/4kpK1/8 b - - 1 86');
         $this->assertFalse($this->game->hasWhiteMatingMaterial());
         $this->assertTrue($this->game->hasBlackMatingMaterial());
+    }
+
+    /**
+     * Call protected/private method of a class.
+     *
+     * @param object &$object    Instantiated object that we will run method on.
+     * @param string $methodName Method name to call
+     * @param array  $parameters Array of parameters to pass into method.
+     *
+     * @return mixed Method return.
+     */
+    private function invokeMethod(&$object, $methodName, array $parameters = array())
+    {
+        $reflection = new \ReflectionClass(get_class($object));
+        $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
+        return $method->invokeArgs($object, $parameters);
     }
 }
