@@ -1330,7 +1330,7 @@ class ChessGame
      */
     public function inForcedDraw()
     {
-        return $this->inStaleMate() || $this->inBasicDraw();
+        return $this->in5FoldRepetitionDraw() || $this->inStaleMate() || $this->inBasicDraw();
     }
 
     /**
@@ -1338,7 +1338,7 @@ class ChessGame
      */
     public function inClaimableDraw()
     {
-        return $this->inRepetitionDraw() || $this->in50MoveDraw();
+        return $this->in3FoldRepetitionDraw() || $this->in50MoveDraw();
     }
 
     /**
@@ -1363,16 +1363,31 @@ class ChessGame
      *
      * This class determines draw by comparing FENs rendered after every move
      *
-     * @return boolean
+     * @return bool
      */
     public function inRepetitionDraw()
     {
-        $fen = $this->renderFen(false);
-        if (isset($this->_allFENs[$fen]) && $this->_allFENs[$fen] >= 3) {
-            return true;
-        }
+        return $this->in3FoldRepetitionDraw() || $this->in5FoldRepetitionDraw();
+    }
 
-        return false;
+    /**
+     * @return bool
+     */
+    public function in3FoldRepetitionDraw()
+    {
+        $fen = $this->renderFen(false);
+
+        return isset($this->_allFENs[$fen]) && $this->_allFENs[$fen] >= 3 && $this->_allFENs[$fen] < 5;
+    }
+
+    /**
+     * @return bool
+     */
+    public function in5FoldRepetitionDraw()
+    {
+        $fen = $this->renderFen(false);
+
+        return isset($this->_allFENs[$fen]) && $this->_allFENs[$fen] >= 5;
     }
 
     /**
