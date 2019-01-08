@@ -1047,6 +1047,48 @@ class ChessGameTest extends TestCase
         $this->assertTrue($this->game->hasBlackMatingMaterial());
     }
 
+    public function testGameShouldEndInFiveFoldRepetition()
+    {
+        $moves = array(
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6',
+            'Nb1',
+            'Nb8',
+            'Nc3',
+            'Nc6'
+        );
+        $this->game->resetGame();
+        foreach ($moves as $move) {
+            $this->game->moveSAN($move);
+        }
+        $this->assertFiveFoldRepetitionDraw();
+    }
+
+    private function assertFiveFoldRepetitionDraw()
+    {
+        $this->assertTrue($this->game->inRepetitionDraw());
+        $this->assertTrue($this->game->inDraw());
+        $this->assertFalse($this->game->inClaimableDraw());
+        $this->assertTrue($this->game->inForcedDraw());
+        $this->assertEquals('D', $this->game->gameOver());
+    }
+
     /**
      * Call protected/private method of a class.
      *
