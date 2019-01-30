@@ -1105,30 +1105,4 @@ class ChessGameTest extends TestCase
         $method->setAccessible(true);
         return $method->invokeArgs($object, $parameters);
     }
-
-    /**
-     * @dataProvider validMoveProvider
-     */
-    public function testValidMove(array $move, bool $isValid): void
-    {
-        $this->game->resetGame();
-        $this->assertSame($isValid, $this->game->_validMove($move));
-    }
-
-    public function validMoveProvider(): array
-    {
-        return [
-            [
-                [2 => [
-                        'takesfrom' => '',
-                        'takes' => '',
-                        'disambiguate' => '',
-                        'square' => 'e4',
-                        'promote' => '',
-                        'piece' => 'P',
-                ]],
-                true
-            ]
-        ];
-    }
 }
