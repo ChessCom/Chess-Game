@@ -1018,7 +1018,8 @@ class ChessGame
         }
         if (!$this->isError($parsedMove = $this->_parseMove($move))) {
             if (!$this->isError($err = $this->_validMove($parsedMove, $from))) {
-                list($key, $parsedMove) = each($parsedMove);
+                $key = key($parsedMove);
+                $parsedMove = current($parsedMove);
                 $this->_moves[$this->_moveNumber][($this->_move == 'W') ? 0 : 1] = $move;
                 $oldMoveNumber = $this->_moveNumber;
                 $this->_moveNumber += ($this->_move == 'W') ? 0 : 1;
@@ -2305,7 +2306,8 @@ class ChessGame
      */
     public function _validMove($move, $from = null)
     {
-        list($type, $info) = each($move);
+        $type = key($move);
+        $info = current($move);
 
         $this->startTransaction();
         $valid = false;
