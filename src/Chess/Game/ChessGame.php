@@ -618,24 +618,24 @@ class ChessGame
                     if (!$value) {
                         continue;
                     }
-                    if ($name{0} != $color) {
+                    if ($name[0] != $color) {
                         continue;
                     }
                     if (isset($square)) {
-                        if ($name{1} == $parsedMove['piece'] &&
+                        if ($name[1] == $parsedMove['piece'] &&
                             ((is_array($value) && $value[0] == $square) ||
                             (!is_array($value) && $value == $square))
                         ) {
                             return $square;
                         }
-                        if ($name{1} == 'P' && $value[0] == $square &&
+                        if ($name[1] == 'P' && $value[0] == $square &&
                             $value[1] == $parsedMove['piece']
                         ) {
                             return $square;
                         }
                     } elseif (isset($col)) {
-                        if ($name{1} == $parsedMove['piece'] &&
-                            $value{0} == $col
+                        if ($name[1] == $parsedMove['piece'] &&
+                            $value[0] == $col
                         ) {
                             if (in_array($parsedMove['square'],
                                 $this->getPossibleMoves($parsedMove['piece'],
@@ -644,7 +644,7 @@ class ChessGame
                                 $potentials[] = $value;
                             }
                         }
-                        if ($name{1} == 'P' && $value[0]{0} == $col &&
+                        if ($name[1] == 'P' && $value[0][0] == $col &&
                             $value[1] == $parsedMove['piece']
                         ) {
                             if (in_array($parsedMove['square'],
@@ -655,8 +655,8 @@ class ChessGame
                             }
                         }
                     } elseif (isset($row)) {
-                        if ($name{1} == $parsedMove['piece'] &&
-                            $value{1} == $row
+                        if ($name[1] == $parsedMove['piece'] &&
+                            $value[1] == $row
                         ) {
                             if (in_array($parsedMove['square'],
                                 $this->getPossibleMoves($parsedMove['piece'],
@@ -665,7 +665,7 @@ class ChessGame
                                 $potentials[] = $value;
                             }
                         }
-                        if ($name{1} == 'P' && $value[0]{1} == $row &&
+                        if ($name[1] == 'P' && $value[0][1] == $row &&
                             $value[1] == $parsedMove['piece']
                         ) {
                             if (in_array($parsedMove['square'],
@@ -676,14 +676,14 @@ class ChessGame
                             }
                         }
                     } else {
-                        if ($name{1} == $parsedMove['piece']) {
+                        if ($name[1] == $parsedMove['piece']) {
                             if (in_array($parsedMove['square'],
                                 $this->getPossibleMoves($parsedMove['piece'],
                                     $value, $color))
                             ) {
                                 $potentials[] = $value;
                             }
-                        } elseif ($name{1} == 'P' &&
+                        } elseif ($name[1] == 'P' &&
                             $value[1] == $parsedMove['piece']
                         ) {
                             if (in_array($parsedMove['square'],
@@ -712,15 +712,15 @@ class ChessGame
                 }
                 $potentials = array();
                 foreach ($this->_pieces as $name => $value) {
-                    if ($name{0} != $color) {
+                    if ($name[0] != $color) {
                         continue;
                     }
                     if (isset($square)) {
-                        if ($name{1} == 'P' && $value[0] == $square && $value[1] == 'P') {
+                        if ($name[1] == 'P' && $value[0] == $square && $value[1] == 'P') {
                             return $square;
                         }
                     } elseif (isset($col)) {
-                        if ($name{1} == 'P' && $value[0]{0} == $col && $value[1] == 'P') {
+                        if ($name[1] == 'P' && $value[0][0] == $col && $value[1] == 'P') {
                             if (in_array($parsedMove['square'],
                                 $this->getPossiblePawnMoves($value[0], $color))
                             ) {
@@ -728,7 +728,7 @@ class ChessGame
                             }
                         }
                     } else {
-                        if ($name{1} == 'P' && $value[1] == 'P') {
+                        if ($name[1] == 'P' && $value[1] == 'P') {
                             if (in_array($parsedMove['square'],
                                 $this->getPossiblePawnMoves($value[0], $color))
                             ) {
@@ -767,7 +767,7 @@ class ChessGame
         $oppositeColor = $color == 'W' ? 'B' : 'W';
 
         foreach ($this->_pieces as $name => $loc) {
-            if ($name{0} == $oppositeColor) {
+            if ($name[0] == $oppositeColor) {
                 $enemyLoc = (is_array($loc) ? $loc[0] : $loc);
                 if ($enemyLoc && $this->isThreat($enemyLoc, $kingLoc)) {
                     $ret[] = $enemyLoc;
@@ -792,10 +792,10 @@ class ChessGame
 
     private function isThreat($from, $to)
     {
-        $x1 = ord($from{0}) - ord('a');
-        $y1 = ord($from{1}) - ord('1');
-        $x2 = ord($to{0}) - ord('a');
-        $y2 = ord($to{1}) - ord('1');
+        $x1 = ord($from[0]) - ord('a');
+        $y1 = ord($from[1]) - ord('1');
+        $x2 = ord($to[0]) - ord('a');
+        $y2 = ord($to[1]) - ord('1');
 
         $piece = $this->_squareToPiece($from);
         switch ($piece['piece']) {
@@ -873,11 +873,11 @@ class ChessGame
             if (!$loc) {
                 continue;
             }
-            if ($name{0} == $color) {
-                if ($name{1} == 'P') {
+            if ($name[0] == $color) {
+                if ($name[1] == 'P') {
                     $ret[$name] = $this->getPossibleMoves($loc[1], $loc[0], $color, false);
                 } else {
-                    $ret[$name] = $this->getPossibleMoves($name{1}, $loc, $color, false);
+                    $ret[$name] = $this->getPossibleMoves($name[1], $loc, $color, false);
                 }
             }
         }
@@ -892,10 +892,10 @@ class ChessGame
             if (!$loc) {
                 continue;
             }
-            if ($name{0} != $color) {
+            if ($name[0] != $color) {
                 continue;
             }
-            if ($name{1} == 'P') {
+            if ($name[1] == 'P') {
                 if ($loc[1] != $piece || $loc[0] == $exclude) {
                     continue;
                 } else {
@@ -906,7 +906,7 @@ class ChessGame
             if ($loc == $exclude) {
                 continue;
             }
-            if ($name{1} != $piece) {
+            if ($name[1] != $piece) {
                 continue;
             }
             $ret[] = $loc;
@@ -964,7 +964,7 @@ class ChessGame
             $newTo = $this->_pieces[$this->_board[$from]];
             if (is_array($newTo)) {
                 $newTo[0] = $to;
-                if ($promote && ($to{1} == '8' || $to{1} == '1')) {
+                if ($promote && ($to[1] == '8' || $to[1] == '1')) {
                     $newTo[1] = $promote;
                 }
             } else {
@@ -986,12 +986,12 @@ class ChessGame
     {
         if ($this->_board[$square] != $square) {
             $piece = $this->_board[$square];
-            if ($piece{1} == 'P') {
-                $color = $piece{0};
+            if ($piece[1] == 'P') {
+                $color = $piece[0];
                 $piece = $this->_pieces[$piece][1];
             } else {
-                $color = $piece{0};
-                $piece = $piece{1};
+                $color = $piece[0];
+                $piece = $piece[1];
             }
 
             return array('color' => $color, 'piece' => $piece);
@@ -1076,12 +1076,12 @@ class ChessGame
                     if ($parsedMove['piece'] == 'P') {
                         $this->_halfMoves = 0;
                         $this->_enPassantSquare = '-';
-                        if (in_array($movedFrom{1} - $parsedMove['square']{1},
+                        if (in_array($movedFrom[1] - $parsedMove['square'][1],
                             array(2, -2))
                         ) {
                             $direction = ($this->_move == 'W' ? 1 : -1);
-                            $this->_enPassantSquare = $parsedMove['square']{0} .
-                                ($parsedMove['square']{1} - $direction);
+                            $this->_enPassantSquare = $parsedMove['square'][0] .
+                                ($parsedMove['square'][1] - $direction);
                         }
                     } else {
                         $this->_enPassantSquare = '-';
@@ -1091,10 +1091,10 @@ class ChessGame
                         $this->{'_' . $this->_move . 'CastleK'} = false;
                     }
                     if ($parsedMove['piece'] == 'R') {
-                        if ($movedFrom{0} == $this->_QRookColumn && (($this->_move == 'B' && $movedFrom{1} == '8') || ($this->_move == 'W' && $movedFrom{1} == '1'))) {
+                        if ($movedFrom[0] == $this->_QRookColumn && (($this->_move == 'B' && $movedFrom[1] == '8') || ($this->_move == 'W' && $movedFrom[1] == '1'))) {
                             $this->{'_' . $this->_move . 'CastleQ'} = false;
                         }
-                        if ($movedFrom{0} == $this->_KRookColumn && (($this->_move == 'B' && $movedFrom{1} == '8') || ($this->_move == 'W' && $movedFrom{1} == '1'))) {
+                        if ($movedFrom[0] == $this->_KRookColumn && (($this->_move == 'B' && $movedFrom[1] == '8') || ($this->_move == 'W' && $movedFrom[1] == '1'))) {
                             $this->{'_' . $this->_move . 'CastleK'} = false;
                         }
                     }
@@ -1563,7 +1563,7 @@ class ChessGame
         $ws = 0;
         $saveRow = '8';
         foreach ($this->_board as $square => $piece) {
-            if ($square{1} != $saveRow) {
+            if ($square[1] != $saveRow) {
                 // if we have just moved to the next rank,
                 // output any whitespace, and a '/'
                 if ($ws) {
@@ -1571,7 +1571,7 @@ class ChessGame
                 }
                 $fen .= '/';
                 $ws = 0;
-                $saveRow = $square{1};
+                $saveRow = $square[1];
             }
             if ($square == $piece) {
                 // increment whitespace - no piece on this square
@@ -1584,11 +1584,11 @@ class ChessGame
                 $ws = 0;
                 if (is_array($this->_pieces[$piece])) {
                     // add pawns/promoted pawns
-                    $p = ($piece{0} == 'W') ? $this->_pieces[$piece][1] :
+                    $p = ($piece[0] == 'W') ? $this->_pieces[$piece][1] :
                         strtolower($this->_pieces[$piece][1]);
                 } else {
                     // add pieces
-                    $p = ($piece{0} == 'W') ? $piece{1} : strtolower($piece{1});
+                    $p = ($piece[0] == 'W') ? $piece[1] : strtolower($piece[1]);
                 }
                 $fen .= $p;
             }
@@ -1732,10 +1732,10 @@ class ChessGame
         }
         if ($this->_board[$square] != $square) {
             $dPiece = $this->_board[$square];
-            if ($dPiece{1} == 'P') {
+            if ($dPiece[1] == 'P') {
                 $dPiece = $this->_pieces[$dPiece][1];
             } else {
-                $dPiece = $dPiece{1};
+                $dPiece = $dPiece[1];
             }
 
             return $this->raiseError(self::GAMES_CHESS_ERROR_DUPESQUARE,
@@ -1786,11 +1786,11 @@ class ChessGame
                 $ret[$square] = false;
                 continue;
             }
-            $lower = $piece{0};
+            $lower = $piece[0];
             if (is_array($this->_pieces[$piece])) {
                 $piece = $this->_pieces[$piece][1];
             } else {
-                $piece = $piece{1};
+                $piece = $piece[1];
             }
             if ($lower == 'B') {
                 $piece = strtolower($piece);
@@ -1815,16 +1815,16 @@ class ChessGame
         if ($a == $b) {
             return 0;
         }
-        if ($a{1} == $b{1}) {
-            return strnatcmp($a{0}, $b{0});
+        if ($a[1] == $b[1]) {
+            return strnatcmp($a[0], $b[0]);
         }
-        if ($a{0} == $b{0}) {
-            return strnatcmp($b{1}, $a{1});
+        if ($a[0] == $b[0]) {
+            return strnatcmp($b[1], $a[1]);
         }
-        if ($b{1} > $a{1}) {
+        if ($b[1] > $a[1]) {
             return 1;
         }
-        if ($a{1} > $b{1}) {
+        if ($a[1] > $b[1]) {
             return -1;
         }
     }
@@ -1899,10 +1899,10 @@ class ChessGame
         }
 
         if ($to == $this->_enPassantSquare && $this->isPawn($this->_board[$from])) {
-            $rank = ($to{1} == '3') ? '4' : '5';
+            $rank = ($to[1] == '3') ? '4' : '5';
             // this piece was just taken
-            $this->takePiece($to{0} . $rank);
-            $this->_board[$to{0} . $rank] = $to{0} . $rank;
+            $this->takePiece($to[0] . $rank);
+            $this->_board[$to[0] . $rank] = $to[0] . $rank;
         }
         if ($this->_board[$to] != $to) {
             // this piece was just taken
@@ -1960,7 +1960,7 @@ class ChessGame
         // pawn moves
         if (is_string($move) && preg_match('/^P?(([a-h])([1-8])?(x))?([a-h][1-8])(=?([QRNB]))?$/', $move, $match)) {
             if ($match[2]) {
-                $takesFrom = $match[2]{0};
+                $takesFrom = $match[2][0];
             } else {
                 $takesFrom = '';
             }
@@ -2126,11 +2126,11 @@ class ChessGame
 
         // parse position section
         while ($idx < strlen($FEN)) {
-            $c = $FEN{$idx};
+            $c = $FEN[$idx];
             switch ($c) {
                 case "K" :
                     if ($this->_Chess960) {
-                        $this->_KColumn = $loc{0};
+                        $this->_KColumn = $loc[0];
                     }
                 case "R" :
                 case "Q" :
@@ -2155,10 +2155,10 @@ class ChessGame
                 case "r" :
                     if ($this->_Chess960) {
                         if (!$this->_QRookSet) {
-                            $this->_QRookColumn = $loc{0};
+                            $this->_QRookColumn = $loc[0];
                             $this->_QRookSet = true;
                         } else {
-                            $this->_KRookColumn = $loc{0};
+                            $this->_KRookColumn = $loc[0];
                         }
                     }
                 case "k" :
@@ -2190,11 +2190,11 @@ class ChessGame
                 case "6" :
                 case "7" :
                 case "8" :
-                    $loc{0} = chr(ord($loc{0}) + ($c - 1));
+                    $loc[0] = chr(ord($loc[0]) + ($c - 1));
                     break;
                 case "/" :
-                    $loc{1} = $loc{1} - 1;
-                    $loc{0} = 'a';
+                    $loc[1] = $loc[1] - 1;
+                    $loc[0] = 'a';
                     $idx++;
                     continue 2;
                     break;
@@ -2204,9 +2204,9 @@ class ChessGame
                     break;
             }
             $idx++;
-            $loc{0} = chr(ord($loc{0}) + 1);
-            if (ord($loc{0}) > ord('h')) {
-                if (strlen($FEN) > $idx && $FEN{$idx} != '/') {
+            $loc[0] = chr(ord($loc[0]) + 1);
+            if (ord($loc[0]) > ord('h')) {
+                if (strlen($FEN) > $idx && $FEN[$idx] != '/') {
                     return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_TOOMUCH,
                         array('fen' => $fen));
                 }
@@ -2238,7 +2238,7 @@ class ChessGame
                 if ($i >= strlen($splitFen[2])) {
                     continue;
                 }
-                switch ($splitFen[2]{$i}) {
+                switch ($splitFen[2][$i]) {
                     case 'K' :
                         $this->_WCastleK = true;
                         break;
@@ -2253,7 +2253,7 @@ class ChessGame
                         break;
                     default:
                         return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLEWRONG,
-                            array('fen' => $fen, 'castle' => $splitFen[2]{$i}));
+                            array('fen' => $fen, 'castle' => $splitFen[2][$i]));
                         break;
                 }
             }
@@ -2567,10 +2567,10 @@ class ChessGame
             }
         }
         if (count($ambiguous) == 1) {
-            if ($ambiguous[0]{0} != $from{0}) {
-                $disambiguate = $from{0};
-            } elseif ($ambiguous[0]{1} != $from{1}) {
-                $disambiguate = $from{1};
+            if ($ambiguous[0][0] != $from[0]) {
+                $disambiguate = $from[0];
+            } elseif ($ambiguous[0][1] != $from[1]) {
+                $disambiguate = $from[1];
             } else {
                 $disambiguate = $from;
             }
@@ -2578,8 +2578,8 @@ class ChessGame
             $disambiguate = $from;
         }
         if ($piece['piece'] == 'P') {
-            if ($from{0} != $to{0}) {
-                $SAN = $from{0};
+            if ($from[0] != $to[0]) {
+                $SAN = $from[0];
             }
         } else {
             $SAN = $piece['piece'];
@@ -2594,7 +2594,7 @@ class ChessGame
             }
         }
         $SAN .= $to;
-        if ($piece['piece'] == 'P' && ($to{1} == '1' || $to{1} == '8')) {
+        if ($piece['piece'] == 'P' && ($to[1] == '1' || $to[1] == '8')) {
             $SAN .= '=' . $promote;
         }
 
@@ -2684,43 +2684,43 @@ class ChessGame
      */
     public function _getDiagonals($square, $returnFlatArray = false)
     {
-        $nw = ($square{0} != 'a') && ($square{1} != '8');
-        $ne = ($square{0} != 'h') && ($square{1} != '8');
-        $sw = ($square{0} != 'a') && ($square{1} != '1');
-        $se = ($square{0} != 'h') && ($square{1} != '1');
+        $nw = ($square[0] != 'a') && ($square[1] != '8');
+        $ne = ($square[0] != 'h') && ($square[1] != '8');
+        $sw = ($square[0] != 'a') && ($square[1] != '1');
+        $se = ($square[0] != 'h') && ($square[1] != '1');
         if ($nw) {
             $nw = array();
             $i = $square;
-            while (ord($i{0}) > ord('a') && ord($i{1}) < ord('8')) {
-                $i{0} = chr(ord($i{0}) - 1);
-                $i{1} = chr(ord($i{1}) + 1);
+            while (ord($i[0]) > ord('a') && ord($i[1]) < ord('8')) {
+                $i[0] = chr(ord($i[0]) - 1);
+                $i[1] = chr(ord($i[1]) + 1);
                 $nw[] = $i;
             }
         }
         if ($ne) {
             $ne = array();
             $i = $square;
-            while (ord($i{0}) < ord('h') && ord($i{1}) < ord('8')) {
-                $i{0} = chr(ord($i{0}) + 1);
-                $i{1} = chr(ord($i{1}) + 1);
+            while (ord($i[0]) < ord('h') && ord($i[1]) < ord('8')) {
+                $i[0] = chr(ord($i[0]) + 1);
+                $i[1] = chr(ord($i[1]) + 1);
                 $ne[] = $i;
             }
         }
         if ($sw) {
             $sw = array();
             $i = $square;
-            while (ord($i{0}) > ord('a') && ord($i{1}) > ord('1')) {
-                $i{0} = chr(ord($i{0}) - 1);
-                $i{1} = chr(ord($i{1}) - 1);
+            while (ord($i[0]) > ord('a') && ord($i[1]) > ord('1')) {
+                $i[0] = chr(ord($i[0]) - 1);
+                $i[1] = chr(ord($i[1]) - 1);
                 $sw[] = $i;
             }
         }
         if ($se) {
             $se = array();
             $i = $square;
-            while (ord($i{0}) < ord('h') && ord($i{1}) > ord('1')) {
-                $i{0} = chr(ord($i{0}) + 1);
-                $i{1} = chr(ord($i{1}) - 1);
+            while (ord($i[0]) < ord('h') && ord($i[1]) > ord('1')) {
+                $i[0] = chr(ord($i[0]) + 1);
+                $i[1] = chr(ord($i[1]) - 1);
                 $se[] = $i;
             }
         }
@@ -2769,39 +2769,39 @@ class ChessGame
      */
     public function _getRookSquares($square, $returnFlatArray = false)
     {
-        $n = ($square{1} != '8');
-        $e = ($square{0} != 'h');
-        $s = ($square{1} != '1');
-        $w = ($square{0} != 'a');
+        $n = ($square[1] != '8');
+        $e = ($square[0] != 'h');
+        $s = ($square[1] != '1');
+        $w = ($square[0] != 'a');
         if ($n) {
             $n = array();
             $i = $square;
-            while (ord($i{1}) < ord('8')) {
-                $i{1} = chr(ord($i{1}) + 1);
+            while (ord($i[1]) < ord('8')) {
+                $i[1] = chr(ord($i[1]) + 1);
                 $n[] = $i;
             }
         }
         if ($e) {
             $e = array();
             $i = $square;
-            while (ord($i{0}) < ord('h')) {
-                $i{0} = chr(ord($i{0}) + 1);
+            while (ord($i[0]) < ord('h')) {
+                $i[0] = chr(ord($i[0]) + 1);
                 $e[] = $i;
             }
         }
         if ($s) {
             $s = array();
             $i = $square;
-            while (ord($i{1}) > ord('1')) {
-                $i{1} = chr(ord($i{1}) - 1);
+            while (ord($i[1]) > ord('1')) {
+                $i[1] = chr(ord($i[1]) - 1);
                 $s[] = $i;
             }
         }
         if ($w) {
             $w = array();
             $i = $square;
-            while (ord($i{0}) > ord('a')) {
-                $i{0} = chr(ord($i{0}) - 1);
+            while (ord($i[0]) > ord('a')) {
+                $i[0] = chr(ord($i[0]) - 1);
                 $w[] = $i;
             }
         }
@@ -2860,36 +2860,36 @@ class ChessGame
     {
         $squares = array();
         // west-northwest square
-        if (ord($square{0}) > ord('b') && $square{1} < 8) {
-            $squares['WNW'] = chr(ord($square{0}) - 2) . ($square{1} + 1);
+        if (ord($square[0]) > ord('b') && $square[1] < 8) {
+            $squares['WNW'] = chr(ord($square[0]) - 2) . ($square[1] + 1);
         }
         // north-northwest square
-        if (ord($square{0}) > ord('a') && $square{1} < 7) {
-            $squares['NNW'] = chr(ord($square{0}) - 1) . ($square{1} + 2);
+        if (ord($square[0]) > ord('a') && $square[1] < 7) {
+            $squares['NNW'] = chr(ord($square[0]) - 1) . ($square[1] + 2);
         }
         // north-northeast square
-        if (ord($square{0}) < ord('h') && $square{1} < 7) {
-            $squares['NNE'] = chr(ord($square{0}) + 1) . ($square{1} + 2);
+        if (ord($square[0]) < ord('h') && $square[1] < 7) {
+            $squares['NNE'] = chr(ord($square[0]) + 1) . ($square[1] + 2);
         }
         // east-northeast square
-        if (ord($square{0}) < ord('g') && $square{1} < 8) {
-            $squares['ENE'] = chr(ord($square{0}) + 2) . ($square{1} + 1);
+        if (ord($square[0]) < ord('g') && $square[1] < 8) {
+            $squares['ENE'] = chr(ord($square[0]) + 2) . ($square[1] + 1);
         }
         // east-southeast square
-        if (ord($square{0}) < ord('g') && $square{1} > 1) {
-            $squares['ESE'] = chr(ord($square{0}) + 2) . ($square{1} - 1);
+        if (ord($square[0]) < ord('g') && $square[1] > 1) {
+            $squares['ESE'] = chr(ord($square[0]) + 2) . ($square[1] - 1);
         }
         // south-southeast square
-        if (ord($square{0}) < ord('h') && $square{1} > 2) {
-            $squares['SSE'] = chr(ord($square{0}) + 1) . ($square{1} - 2);
+        if (ord($square[0]) < ord('h') && $square[1] > 2) {
+            $squares['SSE'] = chr(ord($square[0]) + 1) . ($square[1] - 2);
         }
         // south-southwest square
-        if (ord($square{0}) > ord('a') && $square{1} > 2) {
-            $squares['SSW'] = chr(ord($square{0}) - 1) . ($square{1} - 2);
+        if (ord($square[0]) > ord('a') && $square[1] > 2) {
+            $squares['SSW'] = chr(ord($square[0]) - 1) . ($square[1] - 2);
         }
         // west-southwest square
-        if (ord($square{0}) > ord('b') && $square{1} > 1) {
-            $squares['WSW'] = chr(ord($square{0}) - 2) . ($square{1} - 1);
+        if (ord($square[0]) > ord('b') && $square[1] > 1) {
+            $squares['WSW'] = chr(ord($square[0]) - 2) . ($square[1] - 1);
         }
         if ($returnFlatArray) {
             return array_values($squares);
@@ -2943,29 +2943,29 @@ class ChessGame
     private function getKingSquares($square)
     {
         $squares = array();
-        if (ord($square{0}) - ord('a')) {
-            $squares[] = chr(ord($square{0}) - 1) . $square{1};
-            if ($square{1} < 8) {
-                $squares[] = chr(ord($square{0}) - 1) . ($square{1} + 1);
+        if (ord($square[0]) - ord('a')) {
+            $squares[] = chr(ord($square[0]) - 1) . $square[1];
+            if ($square[1] < 8) {
+                $squares[] = chr(ord($square[0]) - 1) . ($square[1] + 1);
             }
-            if ($square{1} > 1) {
-                $squares[] = chr(ord($square{0}) - 1) . ($square{1} - 1);
-            }
-        }
-        if (ord($square{0}) - ord('h')) {
-            $squares[] = chr(ord($square{0}) + 1) . $square{1};
-            if ($square{1} < 8) {
-                $squares[] = chr(ord($square{0}) + 1) . ($square{1} + 1);
-            }
-            if ($square{1} > 1) {
-                $squares[] = chr(ord($square{0}) + 1) . ($square{1} - 1);
+            if ($square[1] > 1) {
+                $squares[] = chr(ord($square[0]) - 1) . ($square[1] - 1);
             }
         }
-        if ($square{1} > 1) {
-            $squares[] = $square{0} . ($square{1} - 1);
+        if (ord($square[0]) - ord('h')) {
+            $squares[] = chr(ord($square[0]) + 1) . $square[1];
+            if ($square[1] < 8) {
+                $squares[] = chr(ord($square[0]) + 1) . ($square[1] + 1);
+            }
+            if ($square[1] > 1) {
+                $squares[] = chr(ord($square[0]) + 1) . ($square[1] - 1);
+            }
         }
-        if ($square{1} < 8) {
-            $squares[] = $square{0} . ($square{1} + 1);
+        if ($square[1] > 1) {
+            $squares[] = $square[0] . ($square[1] - 1);
+        }
+        if ($square[1] < 8) {
+            $squares[] = $square[0] . ($square[1] + 1);
         }
 
         return $squares;
@@ -3007,7 +3007,7 @@ class ChessGame
     {
         $ret = array();
         foreach ($this->_pieces as $name => $loc) {
-            if ($name{0} == $color) {
+            if ($name[0] == $color) {
                 $where = (is_array($loc) ? $loc[0] : $loc);
                 if ($where) {
                     $ret[] = $where;
@@ -3257,56 +3257,56 @@ class ChessGame
             $dbl = '2';
             $direction = 1;
             // en passant calculation
-            if ($square{1} == '5' && in_array(ord($enPassant{0}) - ord($square{0}), array(1, -1))) {
-                if (in_array(chr(ord($square{0}) - 1) . 5,
+            if ($square[1] == '5' && in_array(ord($enPassant[0]) - ord($square[0]), array(1, -1))) {
+                if (in_array(chr(ord($square[0]) - 1) . 5,
                     $enemyPieces)
                 ) {
-                    $allMoves[] = chr(ord($square{0}) - 1) . 6;
+                    $allMoves[] = chr(ord($square[0]) - 1) . 6;
                 }
-                if (in_array(chr(ord($square{0}) + 1) . 5,
+                if (in_array(chr(ord($square[0]) + 1) . 5,
                     $enemyPieces)
                 ) {
-                    $allMoves[] = chr(ord($square{0}) + 1) . 6;
+                    $allMoves[] = chr(ord($square[0]) + 1) . 6;
                 }
             }
         } else {
             $dbl = '7';
             $direction = -1;
             // en passant calculation
-            if ($square{1} == '4' && in_array(ord($enPassant{0}) - ord($square{0}), array(1, -1))) {
-                if (in_array(chr(ord($square{0}) - 1) . 4,
+            if ($square[1] == '4' && in_array(ord($enPassant[0]) - ord($square[0]), array(1, -1))) {
+                if (in_array(chr(ord($square[0]) - 1) . 4,
                     $enemyPieces)
                 ) {
-                    $allMoves[] = chr(ord($square{0}) - 1) . 3;
+                    $allMoves[] = chr(ord($square[0]) - 1) . 3;
                 }
-                if (in_array(chr(ord($square{0}) + 1) . 4,
+                if (in_array(chr(ord($square[0]) + 1) . 4,
                     $enemyPieces)
                 ) {
-                    $allMoves[] = chr(ord($square{0}) + 1) . 3;
+                    $allMoves[] = chr(ord($square[0]) + 1) . 3;
                 }
             }
         }
-        if (!in_array($square{0} . ($square{1} + $direction), $myPieces) &&
-            !in_array($square{0} . ($square{1} + $direction), $enemyPieces)
+        if (!in_array($square[0] . ($square[1] + $direction), $myPieces) &&
+            !in_array($square[0] . ($square[1] + $direction), $enemyPieces)
         ) {
-            $allMoves[] = $square{0} . ($square{1} + $direction);
+            $allMoves[] = $square[0] . ($square[1] + $direction);
         }
-        if (count($allMoves) && $square{1} == $dbl) {
-            if (!in_array($square{0} . ($square{1} + 2 * $direction), $myPieces) &&
-                !in_array($square{0} . ($square{1} + 2 * $direction), $enemyPieces)
+        if (count($allMoves) && $square[1] == $dbl) {
+            if (!in_array($square[0] . ($square[1] + 2 * $direction), $myPieces) &&
+                !in_array($square[0] . ($square[1] + 2 * $direction), $enemyPieces)
             ) {
-                $allMoves[] = $square{0} . ($square{1} + 2 * $direction);
+                $allMoves[] = $square[0] . ($square[1] + 2 * $direction);
             }
         }
-        if (in_array(chr(ord($square{0}) - 1) . ($square{1} + $direction),
+        if (in_array(chr(ord($square[0]) - 1) . ($square[1] + $direction),
             $enemyPieces)
         ) {
-            $allMoves[] = chr(ord($square{0}) - 1) . ($square{1} + $direction);
+            $allMoves[] = chr(ord($square[0]) - 1) . ($square[1] + $direction);
         }
-        if (in_array(chr(ord($square{0}) + 1) . ($square{1} + $direction),
+        if (in_array(chr(ord($square[0]) + 1) . ($square[1] + $direction),
             $enemyPieces)
         ) {
-            $allMoves[] = chr(ord($square{0}) + 1) . ($square{1} + $direction);
+            $allMoves[] = chr(ord($square[0]) + 1) . ($square[1] + $direction);
         }
 
         return $allMoves;
@@ -3362,8 +3362,8 @@ class ChessGame
     {
         $map = array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6,
             'g' => 7, 'h' => 8);
-        $rank = $map[$square{0}];
-        $file = $square{1};
+        $rank = $map[$square[0]];
+        $file = $square[1];
         $color = ($rank + $file) % 2;
 
         return $color ? 'W' : 'B';
@@ -3653,8 +3653,8 @@ class ChessGame
      */
     public function isBishop($pieceName)
     {
-        return $pieceName{1} == 'B' ||
-        ($pieceName{1} == 'P' &&
+        return $pieceName[1] == 'B' ||
+        ($pieceName[1] == 'P' &&
             $this->_pieces[$pieceName][1] == 'B');
     }
 
@@ -3670,8 +3670,8 @@ class ChessGame
      */
     public function isRook($pieceName)
     {
-        return $pieceName{1} == 'R' ||
-        ($pieceName{1} == 'P' &&
+        return $pieceName[1] == 'R' ||
+        ($pieceName[1] == 'P' &&
             $this->_pieces[$pieceName][1] == 'R');
     }
 
@@ -3687,7 +3687,7 @@ class ChessGame
      */
     public function isPawn($pieceName)
     {
-        return $pieceName{1} == 'P' &&
+        return $pieceName[1] == 'P' &&
         $this->_pieces[$pieceName][1] == 'P';
     }
 
@@ -3703,7 +3703,7 @@ class ChessGame
      */
     public function isKing($pieceName)
     {
-        return $pieceName{1} == 'K';
+        return $pieceName[1] == 'K';
     }
 
     /**
@@ -3713,8 +3713,8 @@ class ChessGame
      */
     public function _isKnight($pieceName)
     {
-        return $pieceName{1} == 'N' ||
-        ($pieceName{1} == 'P' &&
+        return $pieceName[1] == 'N' ||
+        ($pieceName[1] == 'P' &&
             $this->_pieces[$pieceName][1] == 'N');
     }
 
@@ -3734,17 +3734,17 @@ class ChessGame
             if (!$value) {
                 continue;
             }
-            if ($name{0} != $color) {
+            if ($name[0] != $color) {
                 continue;
             }
-            if ($name{1} == 'K') {
+            if ($name[1] == 'K') {
                 continue;
             }
             if (is_array($value)) {
                 $name = $value[1];
                 $value = $value[0];
             } else {
-                $name = $name{1};
+                $name = $name[1];
             }
             $allMoves = $this->getPossibleMoves($name, $value, $color);
 
@@ -3785,7 +3785,7 @@ class ChessGame
      */
     public function _getColor($name)
     {
-        return $name{0};
+        return $name[0];
     }
 
     /**
@@ -3813,12 +3813,12 @@ class ChessGame
             if (!$loc) {
                 continue;
             }
-            $type = $name{1};
+            $type = $name[1];
             if (is_array($loc)) {
                 $type = $loc[1];
                 $loc = $loc[0];
             }
-            $ret[$name{0}][$type][] = $this->_getDiagonalColor($loc);
+            $ret[$name[0]][$type][] = $this->_getDiagonalColor($loc);
         }
 
         return $ret;
