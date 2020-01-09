@@ -712,6 +712,9 @@ class ChessGame
                 }
                 $potentials = array();
                 foreach ($this->_pieces as $name => $value) {
+                    if (!$value) {
+                        continue;
+                    }
                     if ($name[0] != $color) {
                         continue;
                     }
@@ -764,6 +767,9 @@ class ChessGame
     {
         $ret = array();
         $kingLoc = $this->_pieces[$color . 'K'];
+        if (!$kingLoc) {
+            return false;
+        }
         $oppositeColor = $color == 'W' ? 'B' : 'W';
 
         foreach ($this->_pieces as $name => $loc) {
