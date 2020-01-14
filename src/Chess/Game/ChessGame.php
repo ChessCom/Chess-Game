@@ -1425,88 +1425,40 @@ class ChessGame
      */
     public function inBasicDraw()
     {
-        $pieces = $this->getPieceTypes();
-        $blackPieces = array_keys($pieces['B']);
-        $whitePieces = array_keys($pieces['W']);
+        $pieces = $this->getPieces();
+        $blackPieces = $pieces['B'];
+        $whitePieces = $pieces['W'];
+        $piecesCount = count($blackPieces) + count($whitePieces);
 
-        if (count($blackPieces) > 2 || count($whitePieces) > 2) {
-            return false;
-        } elseif (array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
-            return false;
-        } elseif (array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
+        if ($piecesCount > 4) {
             return false;
         }
 
-        if (count($blackPieces) == 1) {
-            if (count($whitePieces) == 1) {
-                return true;
+        if ($piecesCount == 2) {
+            return true; //K vs K
+        }
+
+        if ($piecesCount == 4) {
+            if (count($whitePieces) === count($blackPieces)) {
+                if ((in_array($whitePieces[0], array('N', 'B')) || in_array($whitePieces[1], array('N', 'B')))
+                && (in_array($blackPieces[0], array('N', 'B')) || in_array($blackPieces[1], array('N', 'B')))) {
+                    return true; //K+minor vs K+minor
+                }
             }
-            // XXX: The following if/else block appears to be unreachable due to the if/elseif/elseif block above
-            if ($whitePieces[0] == 'K') {
-                if (in_array($whitePieces[1], array('N', 'B'))) {
-                    if (is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
-                        return false;
-                    } elseif (is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                if (in_array($whitePieces[0], array('N', 'B'))) {
-                    if (array_key_exists('N', $pieces['W']) && is_array($pieces['W']['N']) && count($pieces['W']['N']) > 1) {
-                        return false;
-                    } elseif (array_key_exists('B', $pieces['W']) && is_array($pieces['W']['B']) && count($pieces['W']['B']) > 1) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
+
+            $playerWith3Pieces = count($whitePieces) === 3 ? $whitePieces : $blackPieces;
+
+            if (in_array($playerWith3Pieces[0], array('K', 'N'))
+                && in_array($playerWith3Pieces[1], array('K', 'N'))
+                && in_array($playerWith3Pieces[2], array('K', 'N'))) {
+                return true; //KNN vs K
             }
         }
 
-        if (count($whitePieces) == 1) {
-            if (count($blackPieces) == 1) {
-                return true;
-            }
-            // XXX: The following if/else block appears to be unreachable due to the if/elseif/elseif block above
-            if ($blackPieces[0] == 'K') {
-                if (in_array($blackPieces[1], array('N', 'B'))) {
-                    if (is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
-                        return false;
-                    } elseif (is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                if (in_array($blackPieces[0], array('N', 'B'))) {
-                    if (array_key_exists('N', $pieces['B']) && is_array($pieces['B']['N']) && count($pieces['B']['N']) > 1) {
-                        return false;
-                    } elseif (array_key_exists('B', $pieces['B']) && is_array($pieces['B']['B']) && count($pieces['B']['B']) > 1) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    return false;
-                }
-            }
-        }
-        $wpIndex = ($whitePieces[0] == 'K') ? 1 : 0;
-        $bpIndex = ($blackPieces[0] == 'K') ? 1 : 0;
-        if ($whitePieces[$wpIndex] == 'B' && $blackPieces[$bpIndex] == 'B') {
-            // bishops of same color?
-            if ($pieces['B']['B'][0] == $pieces['W']['B'][0]) {
-                return true;
-            }
+        $playerWith2Pieces = count($whitePieces) == 2 ? $whitePieces : $blackPieces;
+
+        if (in_array($playerWith2Pieces[0], array('N', 'B')) || in_array($playerWith2Pieces[1], array('N', 'B'))) {
+            return true; //K+minor vs K
         }
 
         return false;
@@ -3825,6 +3777,37 @@ class ChessGame
                 $loc = $loc[0];
             }
             $ret[$name[0]][$type][] = $this->_getDiagonalColor($loc);
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Get a list of all pieces on the board
+     *
+     * Used to determine basic draw conditions
+     * @return array Format:
+     *
+     * <pre>
+     * array(
+     *   // white pieces
+     *   'W' => array('B', 'B', 'K'), //2 bishops and the knight
+     *   // black pieces
+     *   'W' => array('Q', 'K'), //Queen and the knight
+     * </pre>
+     */
+    private function getPieces()
+    {
+        $ret = array('W' => array(), 'B' => array());
+        foreach ($this->_pieces as $name => $loc) {
+            if (!$loc) {
+                continue;
+            }
+            $type = $name[1];
+            if (is_array($loc)) {
+                $type = $loc[1];
+            }
+            $ret[$name[0]][] = $type;
         }
 
         return $ret;
