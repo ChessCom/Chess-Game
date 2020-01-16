@@ -541,6 +541,14 @@ class ChessGameTest extends TestCase
         $this->assertBasicDraw();
     }
 
+    public function testIsInBasicDrawKingBishopVersusKingBishopWithBishopsOnDifferentColor()
+    {
+        $startFen = '8/8/8/6k1/1K6/8/2B4b/8 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertBasicDraw();
+    }
+
     public function testIsInBasicDrawKingVersusKing()
     {
         $startFen = '8/5k2/8/8/6K1/8/8/8 w - -';
@@ -557,6 +565,14 @@ class ChessGameTest extends TestCase
             $this->game->resetGame($startFen);
             $this->assertBasicDraw();
         }
+    }
+
+    public function testIsInBasicDrawKingAndTwoKnightsVsKing()
+    {
+        $startFen = '8/8/4K3/8/4k3/3nn3/8/8 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->inBasicDraw());
     }
 
     public function testIsInCheckmate()
@@ -619,14 +635,6 @@ class ChessGameTest extends TestCase
         }
 
         $this->assertRepetitionDraw();
-    }
-
-    public function testIsNotInBasicDrawKingBishopVersusKingBishopBecauseBishopsOnDifferentColors()
-    {
-        $startFen = '6B1/8/8/8/8/6k1/1b6/5K2 w - -';
-
-        $this->game->resetGame($startFen);
-        $this->assertFalse($this->game->inBasicDraw());
     }
 
     public function testIsNotInBasicDrawTooManyBlackBishops()
