@@ -1434,11 +1434,11 @@ class ChessGame
             return false;
         }
 
-        if ($piecesCount == 2) {
+        if ($piecesCount === 2) {
             return true; //K vs K
         }
 
-        if ($piecesCount == 4) {
+        if ($piecesCount === 4) {
             if (count($whitePieces) === count($blackPieces)) {
                 if ((in_array($whitePieces[0], array('N', 'B')) || in_array($whitePieces[1], array('N', 'B')))
                 && (in_array($blackPieces[0], array('N', 'B')) || in_array($blackPieces[1], array('N', 'B')))) {
@@ -1455,7 +1455,7 @@ class ChessGame
             }
         }
 
-        $playerWith2Pieces = count($whitePieces) == 2 ? $whitePieces : $blackPieces;
+        $playerWith2Pieces = count($whitePieces) === 2 ? $whitePieces : $blackPieces;
 
         if (in_array($playerWith2Pieces[0], array('N', 'B')) || in_array($playerWith2Pieces[1], array('N', 'B'))) {
             return true; //K+minor vs K
@@ -3793,7 +3793,7 @@ class ChessGame
      *   // white pieces
      *   'W' => array('B', 'B', 'K'), //2 bishops and the knight
      *   // black pieces
-     *   'W' => array('Q', 'K'), //Queen and the knight
+     *   'B' => array('Q', 'K'), //Queen and the knight
      * </pre>
      */
     private function getPieces()
