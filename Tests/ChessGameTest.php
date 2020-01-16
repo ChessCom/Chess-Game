@@ -567,6 +567,14 @@ class ChessGameTest extends TestCase
         }
     }
 
+    public function testIsInBasicDrawKingAndTwoKnightsVsKing()
+    {
+        $startFen = '8/8/4K3/8/4k3/3nn3/8/8 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertTrue($this->game->inBasicDraw());
+    }
+
     public function testIsInCheckmate()
     {
         $startFen = '3k2R1/8/3K4/8/8/8/8/8 b - -';
