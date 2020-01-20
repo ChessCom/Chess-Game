@@ -1453,6 +1453,8 @@ class ChessGame
                 && in_array($playerWith3Pieces[2], array('K', 'N'))) {
                 return true; //KNN vs K
             }
+
+            return false;
         }
 
         $playerWith2Pieces = count($whitePieces) === 2 ? $whitePieces : $blackPieces;
