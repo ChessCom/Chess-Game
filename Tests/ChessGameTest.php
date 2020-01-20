@@ -575,6 +575,14 @@ class ChessGameTest extends TestCase
         $this->assertTrue($this->game->inBasicDraw());
     }
 
+    public function testIsNotInBasicDrawWith4pieces()
+    {
+        $startFen = '8/8/6B1/3k4/8/4K3/5Q2/8 w - -';
+
+        $this->game->resetGame($startFen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
     public function testIsInCheckmate()
     {
         $startFen = '3k2R1/8/3K4/8/8/8/8/8 b - -';
