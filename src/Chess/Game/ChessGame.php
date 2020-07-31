@@ -2200,16 +2200,16 @@ class ChessGame
                 }
                 switch ($splitFen[2][$i]) {
                     case 'K' :
-                        $this->_WCastleK = true;
+                        $this->_WCastleK = $this->getPiece('WR1') !== false;
                         break;
                     case 'Q' :
-                        $this->_WCastleQ = true;
+                        $this->_WCastleQ = $this->getPiece('WR2') !== false;
                         break;
                     case 'k' :
-                        $this->_BCastleK = true;
+                        $this->_BCastleK = $this->getPiece('BR1') !== false;
                         break;
                     case 'q' :
-                        $this->_BCastleQ = true;
+                        $this->_BCastleQ = $this->getPiece('BR2') !== false;
                         break;
                     default:
                         return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLEWRONG,

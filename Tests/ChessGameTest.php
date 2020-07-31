@@ -71,6 +71,20 @@ class ChessGameTest extends TestCase
         $this->assertEquals('8/8/8/8/8/8/8/8 w KQkq - 1 1', $this->game->renderFen());
     }
 
+    public function testCastlingForbiddenIfNotRook()
+    {
+        $startFen = 'q3k2q/pbpqppbp/1pnp1np1/8/8/1PNP1NP1/PBPQPPBP/Q3K2Q w KQkq - 2 9';
+        $this->game->resetGame($startFen);
+
+        $this->assertFalse($this->game->canCastleKingside());
+        $this->assertFalse($this->game->canCastleQueenside());
+
+        $this->game->moveSAN('e3');
+
+        $this->assertFalse($this->game->canCastleKingside());
+        $this->assertFalse($this->game->canCastleQueenside());
+    }
+
     public function testCastlingBlackFromTheKingSide()
     {
         $startFen = 'rnbqk2r/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR b KQkq a3 0 4';
