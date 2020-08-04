@@ -2193,30 +2193,23 @@ class ChessGame
         $this->_WCastleK = false;
         $this->_BCastleQ = false;
         $this->_BCastleK = false;
-
-        $wr1 = $this->getPiece('WR1');
-        $wr2 = $this->getPiece('WR2');
-        $br1 = $this->getPiece('BR1');
-        $br2 = $this->getPiece('BR2');
-
         if ($splitFen[2] != '-') {
             for ($i = 0; $i < 4; $i++) {
                 if ($i >= strlen($splitFen[2])) {
                     continue;
                 }
-
                 switch ($splitFen[2][$i]) {
                     case 'K' :
-                        $this->_WCastleK = $wr1 === 'h1' || $wr2 === 'h1';
+                        $this->_WCastleK = true;
                         break;
                     case 'Q' :
-                        $this->_WCastleQ = $wr1 === 'a1' || $wr2 === 'a1';
+                        $this->_WCastleQ = true;
                         break;
                     case 'k' :
-                        $this->_BCastleK = $br1 === 'h8' || $br2 === 'h8';
+                        $this->_BCastleK = true;
                         break;
                     case 'q' :
-                        $this->_BCastleQ = $br1 === 'a8' || $br2 === 'a8';
+                        $this->_BCastleQ = true;
                         break;
                     default:
                         return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLEWRONG,
@@ -3621,8 +3614,8 @@ class ChessGame
     public function isBishop($pieceName)
     {
         return $pieceName[1] == 'B' ||
-            ($pieceName[1] == 'P' &&
-                $this->_pieces[$pieceName][1] == 'B');
+        ($pieceName[1] == 'P' &&
+            $this->_pieces[$pieceName][1] == 'B');
     }
 
     /**
@@ -3638,8 +3631,8 @@ class ChessGame
     public function isRook($pieceName)
     {
         return $pieceName[1] == 'R' ||
-            ($pieceName[1] == 'P' &&
-                $this->_pieces[$pieceName][1] == 'R');
+        ($pieceName[1] == 'P' &&
+            $this->_pieces[$pieceName][1] == 'R');
     }
 
     /**
@@ -3655,7 +3648,7 @@ class ChessGame
     public function isPawn($pieceName)
     {
         return $pieceName[1] == 'P' &&
-            $this->_pieces[$pieceName][1] == 'P';
+        $this->_pieces[$pieceName][1] == 'P';
     }
 
     /**
@@ -3681,8 +3674,8 @@ class ChessGame
     public function _isKnight($pieceName)
     {
         return $pieceName[1] == 'N' ||
-            ($pieceName[1] == 'P' &&
-                $this->_pieces[$pieceName][1] == 'N');
+        ($pieceName[1] == 'P' &&
+            $this->_pieces[$pieceName][1] == 'N');
     }
 
     /**

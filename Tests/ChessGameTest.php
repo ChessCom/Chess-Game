@@ -71,42 +71,6 @@ class ChessGameTest extends TestCase
         $this->assertEquals('8/8/8/8/8/8/8/8 w KQkq - 1 1', $this->game->renderFen());
     }
 
-    public function testCastlingForbiddenIfNotRook()
-    {
-        $startFen = 'q3k2q/pbpqppbp/1pnp1np1/8/8/1PNP1NP1/PBPQPPBP/Q3K2Q w KQkq - 2 9';
-        $this->game->resetGame($startFen);
-
-        self::assertFalse($this->game->canCastleKingside());
-        self::assertFalse($this->game->canCastleQueenside());
-
-        $this->game->moveSAN('e3');
-
-        self::assertFalse($this->game->canCastleKingside());
-        self::assertFalse($this->game->canCastleQueenside());
-
-        $startFen = 'r3k2q/pppppppp/8/8/8/8/PPPPPPPP/Q3K2R w KQkq - 0 1';
-        $this->game->resetGame($startFen);
-
-        self::assertTrue($this->game->canCastleKingside());
-        self::assertFalse($this->game->canCastleQueenside());
-
-        $this->game->moveSAN('e3');
-
-        self::assertFalse($this->game->canCastleKingside());
-        self::assertTrue($this->game->canCastleQueenside());
-
-        $startFen = 'q3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2Q w KQkq - 0 1';
-        $this->game->resetGame($startFen);
-
-        self::assertFalse($this->game->canCastleKingside());
-        self::assertTrue($this->game->canCastleQueenside());
-
-        $this->game->moveSAN('e3');
-
-        self::assertTrue($this->game->canCastleKingside());
-        self::assertFalse($this->game->canCastleQueenside());
-    }
-
     public function testCastlingBlackFromTheKingSide()
     {
         $startFen = 'rnbqk2r/pppp1ppp/5n2/2b1p3/P1P1P1P1/8/1P1P1P1P/RNBQKBNR b KQkq a3 0 4';
