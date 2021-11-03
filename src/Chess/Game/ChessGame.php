@@ -470,6 +470,8 @@ class ChessGame
 
     protected $_pieces;
 
+    protected $_FeatureFlag = false;
+
     /**
      * Create a blank chessboard with no pieces on it
      */
@@ -2189,6 +2191,21 @@ class ChessGame
             return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLETOOLONG,
                 array('fen' => $fen, 'castle' => $splitFen[2]));
         }
+
+        // parse move number
+        if (!is_numeric($splitFen[5])) {
+            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER,
+                array('fen' => $fen, 'movenumber' => $splitFen[5]));
+        }
+        $this->_moveNumber = $splitFen[5];
+
+        //Fix for problem with casteling on Chess960 https://chesscom.atlassian.net/browse/CV-224290
+        if ( $this->_Chess960 && $this->_FeatureFlag) {
+            if ($this->_moveNumber == "1") {
+                $splitFen[2] = 'KQkq';
+            }
+        }
+
         $this->_WCastleQ = false;
         $this->_WCastleK = false;
         $this->_BCastleQ = false;
@@ -2235,13 +2252,6 @@ class ChessGame
                 array('fen' => $fen, 'ply' => $splitFen[4]));
         }
         $this->_halfMoves = $splitFen[4];
-
-        // parse move number
-        if (!is_numeric($splitFen[5])) {
-            return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_INVALID_MOVENUMBER,
-                array('fen' => $fen, 'movenumber' => $splitFen[5]));
-        }
-        $this->_moveNumber = $splitFen[5];
 
         return true;
     }
