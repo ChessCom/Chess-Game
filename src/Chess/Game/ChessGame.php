@@ -472,6 +472,13 @@ class ChessGame
 
     protected $_FeatureFlag = false;
 
+    public function setFeatureFlag(bool $featureFlag): ChessGame
+    {
+        $this->_FeatureFlag = $featureFlag;
+
+        return $this;
+    }
+
     /**
      * Create a blank chessboard with no pieces on it
      */
@@ -2199,7 +2206,7 @@ class ChessGame
         }
         $this->_moveNumber = $splitFen[5];
 
-        //Fix for problem with casteling on Chess960 https://chesscom.atlassian.net/browse/CV-224290
+        //Fix for problem with castling on Chess960 https://chesscom.atlassian.net/browse/CV-224290
         if ( $this->_Chess960 && $this->_FeatureFlag) {
             if ($this->_moveNumber == "1") {
                 $splitFen[2] = 'KQkq';

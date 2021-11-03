@@ -1063,6 +1063,22 @@ class ChessGameTest extends TestCase
         $this->assertTrue($this->game->hasBlackMatingMaterial());
     }
 
+    public function testXFenConversionForCastlingChess960()
+    {
+        $this->game->setFeatureFlag(true);
+        $this->game->resetGame('nbbnqrkr/pppppppp/8/8/8/8/PPPPPPPP/NBBNQRKR w HFhf - 0 1', true);
+
+        $this->assertTrue($this->game->canCastleKingside());
+        $this->assertTrue($this->game->canCastleQueenside());
+
+        //testing it is not working for non 960 chess
+        $this->game->setFeatureFlag(true);
+        $this->game->resetGame('nbbnqrkr/pppppppp/8/8/8/8/PPPPPPPP/NBBNQRKR w HFhf - 0 1');
+
+        $this->assertFalse($this->game->canCastleKingside());
+        $this->assertFalse($this->game->canCastleQueenside());
+    }
+
     public function testGameShouldEndInFiveFoldRepetition()
     {
         $moves = array(
