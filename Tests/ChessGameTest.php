@@ -9,7 +9,7 @@ class ChessGameTest extends TestCase
     /** @var ChessGame */
     private $game;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->game = new ChessGame();
     }
