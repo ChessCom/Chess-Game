@@ -600,7 +600,7 @@ class ChessGame
 
                         if (count($legalMoves) != 1) {
                             $square = $col = $row = null;
-                            $pieces = implode($legalMoves, ' ');
+                            $pieces = implode(' ', $legalMoves);
 
                             return $this->raiseError(
                                 self::GAMES_CHESS_ERROR_TOO_AMBIGUOUS,
@@ -1448,9 +1448,11 @@ class ChessGame
 
             $playerWith3Pieces = count($whitePieces) === 3 ? $whitePieces : $blackPieces;
 
-            if (in_array($playerWith3Pieces[0], array('K', 'N'))
+            if (count($playerWith3Pieces) === 3
+                && in_array($playerWith3Pieces[0], array('K', 'N'))
                 && in_array($playerWith3Pieces[1], array('K', 'N'))
-                && in_array($playerWith3Pieces[2], array('K', 'N'))) {
+                && in_array($playerWith3Pieces[2], array('K', 'N'))
+            ) {
                 return true; //KNN vs K
             }
 

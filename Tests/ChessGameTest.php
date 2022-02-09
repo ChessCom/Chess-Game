@@ -9,7 +9,7 @@ class ChessGameTest extends TestCase
     /** @var ChessGame */
     private $game;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->game = new ChessGame();
     }
@@ -1094,6 +1094,18 @@ class ChessGameTest extends TestCase
             $this->game->moveSAN($move);
         }
         $this->assertFiveFoldRepetitionDraw();
+    }
+
+    /**
+     * PHP8
+     *
+     * E_WARNING: Undefined array key 2
+     */
+    public function testInBasicDrawWith3Pieces()
+    {
+        $fen = '8/8/8/8/4k3/8/3K4/6n1 w - -';
+        $this->game->resetGame($fen);
+        $this->assertTrue($this->game->inBasicDraw());
     }
 
     private function assertFiveFoldRepetitionDraw()
