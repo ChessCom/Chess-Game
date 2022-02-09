@@ -1096,12 +1096,14 @@ class ChessGameTest extends TestCase
         $this->assertFiveFoldRepetitionDraw();
     }
 
-    /**
-     * PHP8
-     *
-     * E_WARNING: Undefined array key 2
-     */
-    public function testInBasicDrawWith3Pieces()
+    public function testNotInBasicDrawTwoWhiteVsTwoBlack()
+    {
+        $fen = '8/8/8/8/4k3/8/3Kn3/6Q1 w - -';
+        $this->game->resetGame($fen);
+        $this->assertFalse($this->game->inBasicDraw());
+    }
+
+    public function testInBasicDrawThreePiecesRemained()
     {
         $fen = '8/8/8/8/4k3/8/3K4/6n1 w - -';
         $this->game->resetGame($fen);
