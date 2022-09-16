@@ -1050,6 +1050,9 @@ class ChessGame
                                 $this->moveAlgebraic($this->_KRookColumn . $row, "f$row");
                             }
                             $this->_moveFromSquare = $this->_KColumn . $row;
+                            if (!is_array($this->_lastMove)) {
+                                $this->_lastMove = [];
+                            }
                             $this->_lastMove['square'] = "g$row";
                             break;
                         case 'Q' :
@@ -1065,6 +1068,9 @@ class ChessGame
                                 $this->moveAlgebraic($this->_QRookColumn . $row, "d$row");
                             }
                             $this->_moveFromSquare = $this->_KColumn . $row;
+                            if (!is_array($this->_lastMove)) {
+                                $this->_lastMove = [];
+                            }
                             $this->_lastMove['square'] = "c$row";
                             break;
                     }
