@@ -4,3 +4,4 @@ composer.phar
 phpunit.xml
 bin
 phpunit-report
+.phpunit.result.cache

@@ -833,18 +833,36 @@ class ChessGameTest extends TestCase
         $this->assertEquals('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1', $this->game->renderFen());
     }
 
-    // XXX: Parsing a legitimate Chess960 FEN appears to be horked
-    /**
-     * Set up a new Chess960 board. FEN generated at lichness.org
-     *
-     * @link http://en.lichess.org
-     */
-//    public function testNewChess960GameRenderedFen()
-//    {
-//        $fen = 'nrnbbkqr/pppppppp/8/8/8/8/PPPPPPPP/NRNBBKQR w KQkq - 0 1 ';
-//        $this->game->resetGame($fen, true);
-//        $this->assertEquals($fen, $this->game->renderFen());
-//    }
+   public function testChess960Castling()
+   {
+        $this->game->resetGame('nbbnqrkr/pppppppp/8/8/8/8/PPPPPPPP/NBBNQRKR w HFhf - 0 1', true);
+
+        $this->assertTrue($this->game->canCastleKingside());
+        $this->assertTrue($this->game->canCastleQueenside());
+
+        $this->game->resetGame('nrnbbkqr/pppppppp/8/8/8/8/PPPPPPPP/NRNBBKQR w kq - 0 1', true);
+
+        $this->assertFalse($this->game->canCastleKingside());
+        $this->assertFalse($this->game->canCastleQueenside());
+   }
+
+   public function testChess960GameRenderedFenOuterSquares()
+   {
+       $fen = 'nrnbbkqr/pppppppp/8/8/8/8/PPPPPPPP/NRNBBKQR w KQkq - 0 1';
+       $xFen = 'nrnbbkqr/pppppppp/8/8/8/8/PPPPPPPP/NRNBBKQR w KBkb - 0 1';
+
+       $this->game->resetGame($fen, true);
+
+       $this->assertNotEquals($fen, $this->game->renderFen());
+       $this->assertEquals($xFen, $this->game->renderFen());
+   }
+
+   public function testChess960GameRenderedFenInnerSquares()
+   {
+       $fen = '1rkbrq1n/pppp4/bn3pp1/4p2p/4P3/1N1P1PNB/PPP2QPP/1RK1R1B1 b EBeb - 1 8';
+       $this->game->resetGame($fen, true);
+       $this->assertEquals($fen, $this->game->renderFen());
+   }
 
     public function testNewStandardGameFen()
     {
