@@ -2219,6 +2219,27 @@ class ChessGame
                     case 'q' :
                         $this->_BCastleQ = true;
                         break;
+                    // 960 castling token - example: EBeb
+                    case strtoupper($this->_KRookColumn) :
+                        if ($this->_Chess960) {
+                            $this->_WCastleK = true;
+                            break;
+                        }
+                    case strtoupper($this->_QRookColumn) :
+                        if ($this->_Chess960) {
+                            $this->_WCastleQ = true;
+                            break;
+                        }
+                    case $this->_KRookColumn :
+                        if ($this->_Chess960) {
+                            $this->_BCastleK = true;
+                            break;
+                        }
+                    case $this->_QRookColumn :
+                        if ($this->_Chess960) {
+                            $this->_BCastleQ = true;
+                            break;
+                        }
                     default:
                         return $this->raiseError(self::GAMES_CHESS_ERROR_FEN_CASTLEWRONG,
                             array('fen' => $fen, 'castle' => $splitFen[2][$i]));
